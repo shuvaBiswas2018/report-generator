@@ -26,3 +26,7 @@ yarn-error.log*
 /venv
 backend/venv
 /backend/venv/
+
+/node_modules
+/frontend/node_modules
+frontend/node_modules/

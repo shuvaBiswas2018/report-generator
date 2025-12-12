@@ -25,15 +25,15 @@ export default function Home() {
               <a className="btn-secondary" href="#features">Learn more</a>
             </div>
 
-            <div className="trusted-by">
+            {/* <div className="trusted-by">
               <strong>Trusted by</strong>
               <div className="logos">
-                <img src="/images/logo1.png" alt="Client 1" />
-                <img src="/images/logo2.png" alt="Client 2" />
-                <img src="/images/logo3.png" alt="Client 3" />
-                <img src="/images/logo4.png" alt="Client 4" />
+                <img src="/images/1541108531612.jpeg" alt="Client 1" />
+                <img src="/images/1541108531612.jpeg" alt="Client 2" />
+                <img src="/images/1541108531612.jpeg" alt="Client 3" />
+                <img src="/images/1541108531612.jpeg" alt="Client 4" />
               </div>
-            </div>
+            </div> */}
           </div>
 
           <div className="hero-right" aria-hidden="true">
@@ -42,7 +42,33 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Features section */}
+      {/* Metrics Circles ABOVE feature cards */
+      <section className="metrics-section">
+        <div className="container metrics-container">
+          <div className="metric-card">
+            <div className="metric-circle" style={{background: 'linear-gradient(135deg,#7c3aed,#06b6d4)'}}>
+              <div className="metric-value">1,248</div>
+            </div>
+            <div className="metric-label">Reports generated</div>
+          </div>
+
+          <div className="metric-card">
+            <div className="metric-circle" style={{background: 'linear-gradient(135deg,#06b6d4,#7c3aed)'}}>
+              <div className="metric-value">23,540</div>
+            </div>
+            <div className="metric-label">Data points processed</div>
+          </div>
+
+          <div className="metric-card">
+            <div className="metric-circle" style={{background: 'linear-gradient(135deg,#f97316,#fb7185)'}}>
+              <div className="metric-value">~45s</div>
+            </div>
+            <div className="metric-label">Avg. time to generate</div>
+          </div>
+        </div>
+      </section>
+
+      /* Features section */}
       <section id="features" className="features">
         <div className="container feature-grid">
           <article className="feature feature-card">
@@ -70,6 +96,8 @@ export default function Home() {
           </article>
         </div>
       </section>
+
+      
 
       {/* CTA strip */}
       <section className="cta-strip">
