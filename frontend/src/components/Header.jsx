@@ -18,7 +18,7 @@ export default function Header() {
 
   return (
     <header className="pf-header">
-      <div className="pf-container pf-header-inner">
+      <div className="pf-header-inner">
 
         {/* ------------------ LOGO + BRAND ------------------ */}
         <div
@@ -26,7 +26,7 @@ export default function Header() {
           onClick={() => navigate('/')}
           style={{ cursor: 'pointer' }}
         >
-          <img src="images/efficioTech_logo.png" alt="InsightFlow" className="pf-logo" />
+          <img src="/images/efficioTech_logo.png" alt="InsightFlow" className="pf-logo" />
 
           <div className="pf-brand-text">
             <div className="pf-title">InsightFlow</div>
@@ -34,8 +34,9 @@ export default function Header() {
           </div>
         </div>
 
-        {/* ------------------ RIGHT SIDE CONTROLS ------------------ */}
+        {/* ------------------ RIGHT CONTROLS ------------------ */}
         <div className="pf-controls">
+          
           {/* Search Box */}
           <input
             className="pf-search"
@@ -46,7 +47,7 @@ export default function Header() {
           {!auth.user ? (
             <>
               <Link to="/login" className="pf-ghost">Sign in</Link>
-              <Link to="/signup" className="pf-primary">Sign up</Link>
+              {/* SIGN UP REMOVED */}
             </>
           ) : (
             /* If logged in */
@@ -66,7 +67,7 @@ export default function Header() {
             </div>
           )}
 
-          {/* Contact Us Button */}
+          {/* Contact Us */}
           <button
             className="pf-outlined"
             onClick={onContact}
