@@ -31,17 +31,52 @@ export default function Signup() {
 
   return (
     <div className="pf-login-page">
-
       <div className="pf-login-card slide-in">
 
         <h2 className="pf-login-title">Create Account ✨</h2>
         <p className="pf-login-sub">Start using InsightFlow for free.</p>
 
+        {/* SOCIAL LOGIN SECTION */}
+        <div className="social-wrapper">
+
+          {/* Google Long Button */}
+          <button className="google-long-btn">
+            <img src="/icons/google.png" className="google-icon" alt="Google" />
+            Continue with Google
+          </button>
+
+          {/* Social Icons Row */}
+          <div className="social-circle-row">
+
+            <button className="circle-btn">
+              <img src="/icons/facebook.png" alt="facebook" />
+            </button>
+
+            <button className="circle-btn">
+              <img src="/icons/linkedin.png" alt="linkedin" />
+            </button>
+
+            <button className="circle-btn">
+              <img src="/icons/github.png" alt="github" />
+            </button>
+
+            <button className="circle-btn">
+              <img src="/icons/microsoft.png" alt="microsoft" />
+            </button>
+
+          </div>
+        </div>
+
+        {/* OR DIVIDER */}
+        <div className="divider">
+          <span>OR</span>
+        </div>
+
+        {/* NORMAL SIGNUP FORM */}
         <form onSubmit={submit} className="pf-login-form">
 
           {error && <div className="pf-login-error">{error}</div>}
 
-          {/* NAME */}
           <label className="pf-label">Full Name</label>
           <input
             className="pf-input animated-input"
@@ -51,7 +86,6 @@ export default function Signup() {
             required
           />
 
-          {/* EMAIL */}
           <label className="pf-label" style={{ marginTop: 12 }}>Email</label>
           <input
             className="pf-input animated-input"
@@ -61,7 +95,6 @@ export default function Signup() {
             required
           />
 
-          {/* PASSWORD */}
           <label className="pf-label" style={{ marginTop: 12 }}>Password</label>
           <input
             className="pf-input animated-input"
@@ -71,13 +104,8 @@ export default function Signup() {
             required
           />
 
-          {/* BUTTONS */}
           <div className="pf-login-buttons">
-            <button
-              type="submit"
-              className="btn-primary"
-              disabled={busy}
-            >
+            <button type="submit" className="btn-primary" disabled={busy}>
               {busy ? 'Creating...' : 'Create Account'}
             </button>
 
@@ -85,9 +113,7 @@ export default function Signup() {
               Sign In
             </Link>
           </div>
-
         </form>
-
       </div>
     </div>
   );
