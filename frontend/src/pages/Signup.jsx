@@ -18,6 +18,7 @@ export default function Signup() {
     e.preventDefault();
     setError('');
     setBusy(true);
+
     try {
       await auth.signup({ name, email, password });
       navigate('/', { replace: true });
@@ -29,30 +30,64 @@ export default function Signup() {
   };
 
   return (
-    <div className="pf-page">
-      <div style={{ maxWidth: 460, margin: '36px auto' }}>
-        <div className="pf-card">
-          <h2>Create account</h2>
-          <p className="pf-muted">Start using InsightFlow for free.</p>
+    <div className="pf-login-page">
 
-          <form onSubmit={submit} style={{ marginTop: 12 }}>
-            {error && <div style={{ color: 'crimson', marginBottom: 10 }}>{error}</div>}
+      <div className="pf-login-card slide-in">
 
-            <label className="if-label">Full name</label>
-            <input className="pf-input" value={name} onChange={(e) => setName(e.target.value)} required />
+        <h2 className="pf-login-title">Create Account ✨</h2>
+        <p className="pf-login-sub">Start using InsightFlow for free.</p>
 
-            <label className="if-label" style={{ marginTop: 10 }}>Email</label>
-            <input className="pf-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <form onSubmit={submit} className="pf-login-form">
 
-            <label className="if-label" style={{ marginTop: 10 }}>Password</label>
-            <input className="pf-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          {error && <div className="pf-login-error">{error}</div>}
 
-            <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
-              <button type="submit" className="pf-primary" disabled={busy}>{busy ? 'Creating...' : 'Create account'}</button>
-              <Link to="/login" className="pf-outlined" style={{ alignSelf: 'center', padding: '8px 12px' }}>Sign in</Link>
-            </div>
-          </form>
-        </div>
+          {/* NAME */}
+          <label className="pf-label">Full Name</label>
+          <input
+            className="pf-input animated-input"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+
+          {/* EMAIL */}
+          <label className="pf-label" style={{ marginTop: 12 }}>Email</label>
+          <input
+            className="pf-input animated-input"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+
+          {/* PASSWORD */}
+          <label className="pf-label" style={{ marginTop: 12 }}>Password</label>
+          <input
+            className="pf-input animated-input"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+
+          {/* BUTTONS */}
+          <div className="pf-login-buttons">
+            <button
+              type="submit"
+              className="btn-primary"
+              disabled={busy}
+            >
+              {busy ? 'Creating...' : 'Create Account'}
+            </button>
+
+            <Link to="/login" className="pf-outlined animated-outline-btn">
+              Sign In
+            </Link>
+          </div>
+
+        </form>
+
       </div>
     </div>
   );

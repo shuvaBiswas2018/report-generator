@@ -30,9 +30,9 @@ export default function AnalysisSelection() {
             <h3 className="analysis-name">{item.name}</h3>
 
             {item.active ? (
-              <Link to={item.path} className="analysis-button">
+              <button to={item.path} className="btn-primary">
                 Start Analysis
-              </Link>
+              </button>
             ) : (
               <span className="coming-soon">Coming Soon</span>
             )}
