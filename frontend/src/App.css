@@ -1334,3 +1334,24 @@ input[type="file"] {
 .divider::after {
     right: 0;
 }
+
+/* button primary */
+.analysis-button {
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+    background-size: 200% 100%;
+    background-position: left;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-position 0.4s ease, transform 0.2s ease;
+}
+
+.analysis-button:hover {
+    background-position: right;
+    transform: translateY(-2px);
+}
+
+
