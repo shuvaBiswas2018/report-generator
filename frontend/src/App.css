@@ -1161,3 +1161,53 @@ input[type="file"] {
 .back-login:hover {
     text-decoration: underline;
 }
+
+
+/* Entire page fade + slide */
+.contact-animate {
+    margin-top: 25px;
+    height: 80vh;
+  animation: fadePage 2 ease both;
+}
+
+@keyframes fadePage {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Left section animation */
+.fade-slide-left {
+  animation: slideLeftCard 2s ease;
+}
+
+@keyframes slideLeftCard {
+  from { opacity: 0; transform: translateX(-25px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Right section animation */
+.fade-slide-right {
+  animation: slideRightCard 2s ease;
+}
+
+@keyframes slideRightCard {
+  from { opacity: 0; transform: translateX(25px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Fade animation for success/error messages */
+.fade-message {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+
+/* Error text */
+.error-text {
+  color: crimson;
+  margin-top: 6px;
+}

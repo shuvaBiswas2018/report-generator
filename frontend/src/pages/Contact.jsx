@@ -16,8 +16,6 @@ export default function Contact() {
     const [serverError, setServerError] = useState(null);
     const [infoType, setInfoType] = useState('');
 
-
-    // when auth changes (user logs in), prefill fields
     useEffect(() => {
         if (user) {
             setName(user.name || '');
@@ -27,12 +25,10 @@ export default function Contact() {
 
     function validate() {
         const e = {};
-
         if (!infoType) e.infoType = 'Please select an information type.';
         if (!message || message.trim().length < 5) e.message = 'Please enter a message (min 5 characters).';
         if (!email || !/^\S+@\S+\.\S+$/.test(email)) e.email = 'Please enter a valid email address.';
         if (!name || name.trim().length < 2) e.name = 'Please enter your name.';
-
         setErrors(e);
         return Object.keys(e).length === 0;
     }
@@ -45,7 +41,6 @@ export default function Contact() {
 
         setBusy(true);
         try {
-            // Replace with your real backend endpoint
             const res = await fetch('/api/contact', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -59,10 +54,8 @@ export default function Contact() {
 
             setSuccess('Thank you — your message has been sent. We will contact you shortly.');
             setMessage('');
-            // keep name/email when logged in or prefilled
             setErrors({});
         } catch (err) {
-            console.error('Contact submit error', err);
             setServerError(err.message || 'Failed to send message. Please try again later.');
         } finally {
             setBusy(false);
@@ -70,13 +63,16 @@ export default function Contact() {
     }
 
     return (
-        <div className="pf-page">
+        <div className="pf-page contact-animate">
             <div style={{ maxWidth: 1100, margin: '32px auto' }}>
+
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20 }}>
-                    {/* card container */}
+
+                    {/* --- TWO COLUMN AREA --- */}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-                        {/* Left: company info */}
-                        <div className="pf-card" style={{ padding: 22 }}>
+
+                        {/* LEFT PANEL */}
+                        <div className="pf-card contact-left fade-slide-left" style={{ padding: 22 }}>
                             <h2 style={{ marginTop: 0 }}>Contact & Office</h2>
                             <p className="pf-muted">
                                 We're here to help. Reach out to us for product queries, support, partnership or feedback.
@@ -102,9 +98,7 @@ export default function Contact() {
 
                                 <div style={{ marginTop: 12 }}>
                                     <strong>Office:</strong><br />
-                                    House No. 12, Example Street,<br />
-                                    Barasat, North 24 Parganas,<br />
-                                    West Bengal - 700124, India
+                                    Whitefield, Bangalore, Karnataka, India — 560066
                                 </div>
 
                                 <div style={{ marginTop: 12 }}>
@@ -123,27 +117,29 @@ export default function Contact() {
                             </div>
                         </div>
 
-                        {/* Right: contact form */}
-                        <div className="pf-card" style={{ padding: 22 }}>
+                        {/* RIGHT PANEL */}
+                        <div className="pf-card contact-right fade-slide-right" style={{ padding: 22 }}>
                             <h2 style={{ marginTop: 0 }}>Send us a message</h2>
                             <p className="pf-muted">Tell us about your requirement and we’ll get back within one business day.</p>
 
                             {success && (
-                                <div style={{ marginBottom: 12, padding: 10, background: '#ecfdf5', borderRadius: 8, color: '#065f46' }}>
+                                <div className="fade-message" style={{ marginBottom: 12, padding: 10, background: '#ecfdf5', borderRadius: 8, color: '#065f46' }}>
                                     {success}
                                 </div>
                             )}
 
                             {serverError && (
-                                <div style={{ marginBottom: 12, padding: 10, background: '#ffeded', borderRadius: 8, color: '#7f1d1d' }}>
+                                <div className="fade-message" style={{ marginBottom: 12, padding: 10, background: '#ffeded', borderRadius: 8, color: '#7f1d1d' }}>
                                     {serverError}
                                 </div>
                             )}
 
                             <form onSubmit={submit} noValidate>
+
+                                {/* INFO TYPE */}
                                 <label className="if-label">Select Information Type</label>
                                 <select
-                                    className="pf-input"
+                                    className="pf-input animated-input"
                                     value={infoType}
                                     onChange={(e) => setInfoType(e.target.value)}
                                     aria-invalid={!!errors.infoType}
@@ -157,55 +153,61 @@ export default function Contact() {
                                     <option value="report-help">Report / Analysis Help</option>
                                     <option value="other">Other</option>
                                 </select>
-                                {errors.infoType && <div style={{ color: 'crimson', marginTop: 6 }}>{errors.infoType}</div>}
+                                {errors.infoType && <div className="error-text">{errors.infoType}</div>}
+
+                                {/* MESSAGE */}
                                 <label className="if-label">Message</label>
                                 <textarea
-                                    className="pf-input"
+                                    className="pf-input animated-input"
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
                                     rows={6}
                                     placeholder="Write your message..."
                                     aria-invalid={!!errors.message}
                                 />
-                                {errors.message && <div style={{ color: 'crimson', marginTop: 6 }}>{errors.message}</div>}
+                                {errors.message && <div className="error-text">{errors.message}</div>}
 
+                                {/* NAME + EMAIL */}
                                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 12 }}>
+
                                     <div>
                                         <label className="if-label">Your name</label>
                                         <input
-                                            className="pf-input"
+                                            className="pf-input animated-input"
                                             value={name}
                                             onChange={(e) => setName(e.target.value)}
                                             placeholder="Full name"
                                             aria-invalid={!!errors.name}
-                                            disabled={!!user} // lock if logged in
+                                            disabled={!!user}
                                         />
-                                        {errors.name && <div style={{ color: 'crimson', marginTop: 6 }}>{errors.name}</div>}
+                                        {errors.name && <div className="error-text">{errors.name}</div>}
                                     </div>
 
                                     <div>
                                         <label className="if-label">Your email</label>
                                         <input
-                                            className="pf-input"
+                                            className="pf-input animated-input"
                                             type="email"
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
                                             placeholder="you@example.com"
                                             aria-invalid={!!errors.email}
-                                            disabled={!!user} // lock if logged in
+                                            disabled={!!user}
                                         />
-                                        {errors.email && <div style={{ color: 'crimson', marginTop: 6 }}>{errors.email}</div>}
+                                        {errors.email && <div className="error-text">{errors.email}</div>}
                                     </div>
+
                                 </div>
 
+                                {/* BUTTONS */}
                                 <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 14 }}>
-                                    <button type="submit" className="pf-primary" disabled={busy}>
+                                    <button type="submit" className="btn-primary" disabled={busy}>
                                         {busy ? 'Sending...' : 'Send message'}
                                     </button>
 
                                     <button
                                         type="button"
-                                        className="pf-outlined"
+                                        className="pf-outlined animated-outline-btn"
                                         onClick={() => {
                                             setMessage('');
                                             if (!user) {
@@ -222,12 +224,13 @@ export default function Contact() {
                                 </div>
                             </form>
                         </div>
+
                     </div>
 
-                    {/* small footer note under the two columns */}
                     <div style={{ textAlign: 'center', color: '#6b7280', marginTop: 8 }}>
                         By contacting us you agree to our <a href="/privacy" style={{ color: 'inherit' }}>Privacy Policy</a>.
                     </div>
+
                 </div>
             </div>
         </div>
