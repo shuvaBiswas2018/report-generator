@@ -6,7 +6,7 @@ import "./AnalysisSelection.css"; // We will reuse the same image card animation
 export default function AnalysisSelection() {
   // All analysis items
   const analyses = [
-    { name: "Energy Analysis", path: "/energy-analysis", icon: "⚡", active: true },
+    { name: "Energy Analysis", path: "/analysis/energy", icon: "⚡", active: true },
     { name: "Stock Analysis", path: "/stock-analysis", icon: "📈", active: false },
     { name: "Attendance Analysis", path: "/attendance-analysis", icon: "👥", active: false },
     { name: "Financial Analysis", path: "/financial-analysis", icon: "📊", active: false },

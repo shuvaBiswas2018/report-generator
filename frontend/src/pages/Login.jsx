@@ -4,68 +4,100 @@ import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../auth/AuthProvider';
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [busy, setBusy] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [busy, setBusy] = useState(false);
 
-  const auth = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || '/';
+    const auth = useAuth();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || '/';
+    const pendingReportKey = location.state?.pendingReportKey;
 
-  const pendingReportKey = location.state?.pendingReportKey;
+    const submit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setBusy(true);
 
-  const submit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setBusy(true);
-    try {
-      await auth.signin({ email, password });
+        try {
+            await auth.signin({ email, password });
 
-      if (pendingReportKey) {
-        // navigate back to analysis page and include key so page can load stored report
-        navigate(from, { replace: true, state: { pendingReportKey } });
-      } else {
-        navigate(from, { replace: true });
-      }
-    } catch (err) {
-      setError(err.message || 'Login failed');
-    } finally {
-      setBusy(false);
-    }
-  };
+            if (pendingReportKey) {
+                navigate(from, { replace: true, state: { pendingReportKey } });
+            } else {
+                navigate(from, { replace: true });
+            }
+        } catch (err) {
+            setError(err.message || 'Login failed');
+        } finally {
+            setBusy(false);
+        }
+    };
 
-  return (
-    <div className="pf-page">
-      <div style={{ maxWidth: 420, margin: '36px auto' }}>
-        <div className="pf-card">
-          <h2>Sign in</h2>
-          <p className="pf-muted">Sign in to access your analyses and saved reports.</p>
+    return (
+        <div className="pf-login-page slide-left">
 
-          {pendingReportKey && (
-            <div style={{ marginBottom: 10, padding: 10, background: '#fff7ed', borderRadius: 8 }}>
-              <strong>Sign in to continue:</strong> we generated a report for you — after signing in we will reveal it automatically.
+            {/* Animated Card */}
+            <div className="pf-login-card">
+
+                <h2 className="pf-login-title">Welcome Back 👋</h2>
+                <p className="pf-login-sub">Sign in to access your analyses and datasets.</p>
+
+                {pendingReportKey && (
+                    <div className="pf-login-warning">
+                        <strong>Sign in to continue:</strong> your generated report will open automatically.
+                    </div>
+                )}
+
+                {/* Login Form */}
+                <form onSubmit={submit} className="pf-login-form">
+
+                    {error && <div className="pf-login-error">{error}</div>}
+
+                    {/* Email */}
+                    <label className="pf-label">Email</label>
+                    <input
+                        className="pf-input animated-input"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+
+                    {/* Password */}
+                    <label className="pf-label" style={{ marginTop: 14 }}>Password</label>
+                    <input
+                        className="pf-input animated-input"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+
+                    {/* Forgot Password */}
+                    <div className="pf-forgot">
+                        <Link to="/forgot-password">Forgot Password?</Link>
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="pf-login-buttons">
+                        <button
+                            type="submit"
+                            className="btn-primary"
+                            disabled={busy}
+                        >
+                            {busy ? 'Signing in...' : 'Sign in'}
+                        </button>
+
+                        <Link to="/signup" className="pf-outlined animated-outline-btn">
+                            Create account
+                        </Link>
+                    </div>
+
+                </form>
+
             </div>
-          )}
-
-          <form onSubmit={submit} style={{ marginTop: 12 }}>
-            {error && <div style={{ color: 'crimson', marginBottom: 10 }}>{error}</div>}
-
-            <label className="if-label">Email</label>
-            <input className="pf-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-
-            <label className="if-label" style={{ marginTop: 10 }}>Password</label>
-            <input className="pf-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-
-            <div style={{ display: 'flex', gap: 8, marginTop: 14 }}>
-              <button type="submit" className="pf-primary" disabled={busy}>{busy ? 'Signing in...' : 'Sign in'}</button>
-              <Link to="/signup" className="pf-outlined" style={{ alignSelf: 'center', padding: '8px 12px' }}>Create account</Link>
-            </div>
-          </form>
         </div>
-      </div>
-    </div>
-  );
+    );
 }
-    

@@ -1,18 +1,24 @@
 // src/App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import AuthRoutes from "./routes/AuthRoutes";
+
 import Header from './components/Header';
 // import Sidebar from './components/Sidebar';
 import Home from './components/Home';
 import AnalysisSelection from "./components/AnalysisSelection";
-import AnalysisPage from './components/AnalysisPage';
+import MyProfile from "./pages/MyProfile";
+// import AnalysisPage from './components/AnalysisPage';
 import EnergyAnalysis from './components/EnergyAnalysis';
 import Contact from './pages/Contact';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
+// import Login from './pages/Login';
+// import ForgotPassword from "./pages/ForgotPassword";
+// import Signup from './pages/Signup';
 import ComingSoon from './pages/ComingSoon';
 import { AuthProvider } from './auth/AuthProvider';
 import './App.css';
+
+
 
 export default function App() {
   return (
@@ -23,17 +29,24 @@ export default function App() {
           <div className="pf-body">
             {/* <Sidebar /> */}
             <main className="pf-main">
+              {/* AUTH ROUTES WITH ANIMATION */}
+      <AuthRoutes />
+
               <Routes>
                 {/* Public auth pages */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
+                {/* <Route path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/signup" element={<Signup />} /> */}
+                {/* {My Profile} */}
+                <Route path="/my-profile" element={<MyProfile />} />
+
 
                 {/* Coming soon modules */}
                 <Route path="/stock-analysis" element={<ComingSoon />} />
                 <Route path="/attendance-analysis" element={<ComingSoon />} />
 
                 {/* Real analysis page */}
-                <Route path="/energy-analysis" element={<EnergyAnalysis />} />
+                <Route path="/analysis/energy" element={<EnergyAnalysis />} />
                 <Route path="/contact" element={<Contact />} />
 
                 {/* Public app pages (anyone can browse) */}
