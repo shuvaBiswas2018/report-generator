@@ -1,10 +1,9 @@
 // src/components/AnalysisSelection.jsx
 import React from "react";
 import { Link } from "react-router-dom";
-import "./AnalysisSelection.css"; // We will reuse the same image card animations
+import "./AnalysisSelection.css";
 
 export default function AnalysisSelection() {
-  // All analysis items
   const analyses = [
     { name: "Energy Analysis", path: "/analysis/energy", icon: "⚡", active: true },
     { name: "Stock Analysis", path: "/stock-analysis", icon: "📈", active: false },
@@ -16,37 +15,49 @@ export default function AnalysisSelection() {
   ];
 
   return (
-    <div className="home-container">
-      <h1 className="home-title">Choose Your Analysis</h1>
-      <p className="home-subtitle">
-        Select an analysis type to begin. Upload your dataset and generate insights instantly.
+    <div className="as-page">
+
+      {/* Animated Title */}
+      <h1 className="as-title">Choose Your Analysis</h1>
+      <p className="as-subtitle">
+        Powerful AI tools wrapped in a beautiful interface — upload, explore, and generate insights instantly.
       </p>
 
-      <div className="analysis-grid">
-        {analyses.map((item) => (
-          <div key={item.name} className={`analysis-card ${!item.active ? "disabled" : ""}`}>
-            <div className="analysis-icon">{item.icon}</div>
+      {/* Cards */}
+      <div className="as-grid">
+        {analyses.map((item, index) => (
+          <div
+            key={item.name}
+            className={`as-card fade-in`}
+            style={{ animationDelay: `${index * 0.12}s` }}
+          >
+            <div className="as-icon">{item.icon}</div>
 
-            <h3 className="analysis-name">{item.name}</h3>
+            <h3 className="as-name">{item.name}</h3>
 
             {item.active ? (
-              <div className="analysis-btn-row">
-                <Link to={item.path} className="analysis-button">
+              <div className="as-btn-row">
+
+                {/* Start Analysis */}
+                <Link to={item.path} className="as-btn-primary">
                   Start Analysis
                 </Link>
 
-                {/* NEW: GET DETAILS BUTTON */}
+                {/* Get Details */}
                 <Link
                   to={`/analysis-details/${item.path.replace("/analysis/", "")}`}
-                  className="details-button"
+                  className="as-btn-secondary"
                 >
-                  Get Details
+                  Details
                 </Link>
+
               </div>
             ) : (
-              <span className="coming-soon">Coming Soon</span>
+              <span className="as-soon">Coming Soon</span>
             )}
 
+            {/* Animated Gradient Border */}
+            <div className="as-card-glow"></div>
           </div>
         ))}
       </div>

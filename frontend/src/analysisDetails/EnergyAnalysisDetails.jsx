@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 export default function EnergyAnalysisDetails() {
     const [expanded, setExpanded] = useState(false);
     const navigate = useNavigate();
+const [country, setCountry] = useState("");
+const [currencySymbol, setCurrencySymbol] = useState("₹");
 
     // ------------------------------------------
     // HERO SECTION SLIDESHOW IMAGES
@@ -68,20 +70,20 @@ export default function EnergyAnalysisDetails() {
     const [activeFeature, setActiveFeature] = useState("Energy monitoring");
 
     const downloadSampleCSV = () => {
-  const csvContent =
-    "Date & Time,Energy (kWh),Equipment/Zone\n" +
-    "2024-01-01 00:00,12.4,HVAC\n" +
-    "2024-01-01 01:00,10.9,Lighting\n" +
-    "2024-01-01 02:00,9.8,Production Floor\n";
+        const csvContent =
+            "Date & Time,Energy (kWh),Equipment/Zone\n" +
+            "2024-01-01 00:00,12.4,HVAC\n" +
+            "2024-01-01 01:00,10.9,Lighting\n" +
+            "2024-01-01 02:00,9.8,Production Floor\n";
 
-  const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
 
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = "sample_energy_data.csv";
-  link.click();
-};
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "sample_energy_data.csv";
+        link.click();
+    };
 
     return (
         <div className="pf-page" style={{ padding: "80px 100px" }}>
@@ -281,58 +283,57 @@ export default function EnergyAnalysisDetails() {
             {/* ---------------------------------------------- */}
 
             <div
-  style={{
-    marginTop: 60,
-    display: "grid",
-    gridTemplateColumns: "1fr 1px 2fr",
-    gap: 40,
-    alignItems: "start",
-  }}
->
+                style={{
+                    marginTop: 60,
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1px 2fr",
+                    gap: 40,
+                    alignItems: "start",
+                }}
+            >
 
                 {/* LEFT MENU */}
-<div style={{ textAlign: "left" }}>
-  {Object.keys(featureData).map((item) => (
-    <div
-      key={item}
-      className={`left-item ${
-        activeFeature === item ? "active-left-item" : ""
-      }`}
-      onClick={() => setActiveFeature(item)}
-    >
-      {item}
-    </div>
-  ))}
-</div>
+                <div style={{ textAlign: "left" }}>
+                    {Object.keys(featureData).map((item) => (
+                        <div
+                            key={item}
+                            className={`left-item ${activeFeature === item ? "active-left-item" : ""
+                                }`}
+                            onClick={() => setActiveFeature(item)}
+                        >
+                            {item}
+                        </div>
+                    ))}
+                </div>
 
-{/* VERTICAL LINE */}
-<div
-  style={{
-    width: "1px",
-    background: "#e5e7eb",
-    height: "100%",
-  }}
-></div>
+                {/* VERTICAL LINE */}
+                <div
+                    style={{
+                        width: "1px",
+                        background: "#e5e7eb",
+                        height: "100%",
+                    }}
+                ></div>
 
-{/* RIGHT CONTENT */}
-<div>
-  <div style={{ color: "#0077b6", fontWeight: 600, marginBottom: 8 }}>
-    {featureData[activeFeature].label}
-  </div>
+                {/* RIGHT CONTENT */}
+                <div>
+                    <div style={{ color: "#0077b6", fontWeight: 600, marginBottom: 8 }}>
+                        {featureData[activeFeature].label}
+                    </div>
 
-  <h2 style={{ margin: "0 0 14px 0", fontSize: 32, fontWeight: 800 }}>
-    {featureData[activeFeature].title}
-  </h2>
+                    <h2 style={{ margin: "0 0 14px 0", fontSize: 32, fontWeight: 800 }}>
+                        {featureData[activeFeature].title}
+                    </h2>
 
-  <p style={{ maxWidth: 700, marginBottom: 22, lineHeight: 1.6 }}>
-    {featureData[activeFeature].desc}
-  </p>
+                    <p style={{ maxWidth: 700, marginBottom: 22, lineHeight: 1.6 }}>
+                        {featureData[activeFeature].desc}
+                    </p>
 
-  <button className="pf-primary" style={{ padding: "10px 24px" }}>
-    Learn more
-  </button>
+                    <button className="pf-primary" style={{ padding: "10px 24px" }}>
+                        Learn more
+                    </button>
 
-  {/* <div style={{ marginTop: 25 }}>
+                    {/* <div style={{ marginTop: 25 }}>
     <img
       src={featureData[activeFeature].img}
       alt={activeFeature}
@@ -344,140 +345,140 @@ export default function EnergyAnalysisDetails() {
       }}
     />
   </div> */}
-</div>
+                </div>
 
             </div>
             {/* ---------------------------------------------- */}
-{/*               FAQ SECTION                      */}
-{/* ---------------------------------------------- */}
+            {/*               FAQ SECTION                      */}
+            {/* ---------------------------------------------- */}
 
-<div style={{ marginTop: 80 }}>
+            <div style={{ marginTop: 80 }}>
 
-  {/* FAQ Heading */}
-  <h2
-    style={{
-      fontSize: 28,
-      fontWeight: 800,
-      color: "#1e3a5f",
-      textAlign: "center",
-      marginBottom: 8,
-    }}
-  >
-    Frequently Asked Questions
-  </h2>
+                {/* FAQ Heading */}
+                <h2
+                    style={{
+                        fontSize: 28,
+                        fontWeight: 800,
+                        color: "#1e3a5f",
+                        textAlign: "center",
+                        marginBottom: 8,
+                    }}
+                >
+                    Frequently Asked Questions
+                </h2>
 
-  <p
-    style={{
-      textAlign: "center",
-      color: "#6b7280",
-      maxWidth: 700,
-      margin: "0 auto 40px auto",
-      fontSize: 16,
-      lineHeight: 1.6,
-    }}
-  >
-    A quick overview to help you understand why Energy Analysis is important
-    and how it supports cost reduction, equipment efficiency, and smarter decisions.
-  </p>
+                <p
+                    style={{
+                        textAlign: "center",
+                        color: "#6b7280",
+                        maxWidth: 700,
+                        margin: "0 auto 40px auto",
+                        fontSize: 16,
+                        lineHeight: 1.6,
+                    }}
+                >
+                    A quick overview to help you understand why Energy Analysis is important
+                    and how it supports cost reduction, equipment efficiency, and smarter decisions.
+                </p>
 
-  {/* FAQ BLOCK LIST */}
-  <div
-    style={{
-      maxWidth: 900,
-      margin: "0 auto",
-      display: "flex",
-      flexDirection: "column",
-      gap: "18px",
-    }}
-  >
-    
-    {/* FAQ Blocks – using your original text EXACTLY */}
-    <div className="faq-block fade-up">
-      <strong>⚡ What is Energy Analysis?</strong>
-      <p>
-        It evaluates electricity usage across your operations. Detects inefficiencies,
-        wastage, and helps you reduce energy cost.
-      </p>
-    </div>
+                {/* FAQ BLOCK LIST */}
+                <div
+                    style={{
+                        maxWidth: 900,
+                        margin: "0 auto",
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "18px",
+                    }}
+                >
 
-    <div className="faq-block fade-up">
-      <strong>📈 How does it help grow a business?</strong>
-      <p>
-        Reduce operational costs, improve equipment performance, reduce downtime, 
-        increase margins and improve sustainability.
-      </p>
-    </div>
+                    {/* FAQ Blocks – using your original text EXACTLY */}
+                    <div className="faq-block fade-up">
+                        <strong>⚡ What is Energy Analysis?</strong>
+                        <p>
+                            It evaluates electricity usage across your operations. Detects inefficiencies,
+                            wastage, and helps you reduce energy cost.
+                        </p>
+                    </div>
 
-    <div className="faq-block fade-up">
-      <strong>❓ Why do businesses need it?</strong>
-      <p>
-        Rising energy costs, compliance needs and preventing equipment failure make
-        energy analysis essential.
-      </p>
-    </div>
+                    <div className="faq-block fade-up">
+                        <strong>📈 How does it help grow a business?</strong>
+                        <p>
+                            Reduce operational costs, improve equipment performance, reduce downtime,
+                            increase margins and improve sustainability.
+                        </p>
+                    </div>
 
-    <div className="faq-block fade-up">
-      <strong>📤 How to share reports?</strong>
-      <p>
-        Export PDF/Excel, create secure share links, or schedule automated email reports.
-      </p>
-    </div>
+                    <div className="faq-block fade-up">
+                        <strong>❓ Why do businesses need it?</strong>
+                        <p>
+                            Rising energy costs, compliance needs and preventing equipment failure make
+                            energy analysis essential.
+                        </p>
+                    </div>
 
-    <div className="faq-block fade-up">
-      <strong>📝 How to generate a report?</strong>
-      <p>
-        Upload CSV/XLSX → Click Analyze → View automatically generated insights.
-      </p>
-    </div>
+                    <div className="faq-block fade-up">
+                        <strong>📤 How to share reports?</strong>
+                        <p>
+                            Export PDF/Excel, create secure share links, or schedule automated email reports.
+                        </p>
+                    </div>
 
-    <div className="faq-block fade-up">
-  <strong>📊 Sample Data Example</strong>
-  <p style={{ marginBottom: 12 }}>
-    Typical columns: Date & Time, Energy_Consumption (kWh), Equipment/Zone.
-  </p>
+                    <div className="faq-block fade-up">
+                        <strong>📝 How to generate a report?</strong>
+                        <p>
+                            Upload CSV/XLSX → Click Analyze → View automatically generated insights.
+                        </p>
+                    </div>
 
-  {/* Sample Table */}
-  <table className="sample-table">
-    <thead>
-      <tr>
-        <th>Date & Time</th>
-        <th>Energy (kWh)</th>
-        <th>Equipment / Zone</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>2024-01-01 00:00</td>
-        <td>12.4</td>
-        <td>HVAC</td>
-      </tr>
-      <tr>
-        <td>2024-01-01 01:00</td>
-        <td>10.9</td>
-        <td>Lighting</td>
-      </tr>
-      <tr>
-        <td>2024-01-01 02:00</td>
-        <td>9.8</td>
-        <td>Production Floor</td>
-      </tr>
-    </tbody>
-  </table>
+                    <div className="faq-block fade-up">
+                        <strong>📊 Sample Data Example</strong>
+                        <p style={{ marginBottom: 12 }}>
+                            Typical columns: Date & Time, Energy_Consumption (kWh), Equipment/Zone.
+                        </p>
 
-  {/* Download Button */}
-  <button
-    className="btn-primary"
-    style={{ marginTop: 14, padding: "8px 16px" }}
-    onClick={downloadSampleCSV}
-  >
-    Download Sample Data
-  </button>
-</div>
+                        {/* Sample Table */}
+                        <table className="sample-table">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>Energy (kWh)</th>
+                                    <th>Equipment / Zone</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2024-01-01 00:00</td>
+                                    <td>12.4</td>
+                                    <td>HVAC</td>
+                                </tr>
+                                <tr>
+                                    <td>2024-01-01 01:00</td>
+                                    <td>10.9</td>
+                                    <td>Lighting</td>
+                                </tr>
+                                <tr>
+                                    <td>2024-01-01 02:00</td>
+                                    <td>9.8</td>
+                                    <td>Production Floor</td>
+                                </tr>
+                            </tbody>
+                        </table>
 
-    
+                        {/* Download Button */}
+                        <button
+                            className="btn-primary"
+                            style={{ marginTop: 14, padding: "8px 16px" }}
+                            onClick={downloadSampleCSV}
+                        >
+                            Download Sample Data
+                        </button>
+                    </div>
 
-  </div>
-</div>
+
+
+                </div>
+            </div>
         </div>
     );
 }

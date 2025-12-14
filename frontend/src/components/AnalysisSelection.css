@@ -1,130 +1,191 @@
-.home-container {
+/* ============================================================ */
+/*                   PAGE BASE + BACKDROP                       */
+/* ============================================================ */
+
+.as-page {
+  padding: 40px 20px;
   max-width: 1100px;
-  margin: 40px auto;
-  padding: 0 20px;
+  margin: 0 auto;
   text-align: center;
+  position: relative;
 }
 
-.home-title {
-  font-size: 32px;
-  font-weight: bold;
-  margin-bottom: 10px;
+/* Soft pastel background glow */
+.as-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+      circle at top left,
+      rgba(120, 180, 255, 0.25),
+      transparent 60%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(255, 170, 220, 0.25),
+      transparent 60%
+    );
+  z-index: -1;
+  filter: blur(100px);
 }
 
-.home-subtitle {
-  color: #6b7280;
-  max-width: 700px;
-  margin: 0 auto 30px;
+
+/* ============================================================ */
+/*                          TITLES                              */
+/* ============================================================ */
+
+.as-title {
+  font-size: 38px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  background: linear-gradient(90deg, #3a8bff, #66e0ff);
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.as-subtitle {
   font-size: 16px;
+  color: #6b7280;
+  max-width: 650px;
+  margin: 0 auto 40px auto;
+  line-height: 1.6;
 }
 
-/* GRID LAYOUT */
-.analysis-grid {
+
+/* ============================================================ */
+/*                         GRID + CARDS                         */
+/* ============================================================ */
+
+.as-grid {
   display: grid;
-  gap: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
-/* CARD STYLE */
-.analysis-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 14px;
-  padding: 25px;
-  transition: 0.25s ease;
-  text-align: center;
+/* Card (light glassmorphism) */
+.as-card {
+  position: relative;
+  padding: 28px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(225, 225, 225, 0.7);
+  box-shadow: 0px 8px 25px rgba(150, 170, 200, 0.15);
+  transition: 0.35s ease;
 }
 
-.analysis-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0px 10px 25px rgba(0,0,0,0.08);
+.as-card:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0px 12px 30px rgba(150, 170, 200, 0.25);
 }
 
-/* ICON */
-.analysis-icon {
-  font-size: 40px;
-  margin-bottom: 15px;
+/* Animated glowing gradient border */
+.as-card-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(
+    140deg,
+    #b3d4ff,
+    #ffd7f2,
+    #d5bdff,
+    #b0f3ff
+  );
+  background-size: 300% 300%;
+  animation: glow 6s linear infinite;
+  z-index: -1;
+  filter: blur(10px);
+  opacity: 0.55;
 }
 
-/* TITLE */
-.analysis-name {
-  font-size: 18px;
-  font-weight: 600;
+@keyframes glow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.as-icon {
+  font-size: 42px;
   margin-bottom: 12px;
 }
 
-/* BUTTON */
-.analysis-button {
-  display: inline-block;
-  padding: 8px 16px;
-  background: #1f6feb;
-  color: white;
-  border-radius: 8px;
-  font-size: 14px;
-  text-decoration: none;
-  transition: background 0.2s ease;
-}
-
-.analysis-button:hover {
-  background: #1557b0;
-}
-
-/* COMING SOON */
-.disabled {
-  opacity: 0.65;
-}
-
-.coming-soon {
-  display: inline-block;
-  margin-top: 8px;
-  font-size: 14px;
-  padding: 6px 14px;
-  border-radius: 8px;
-  background: #e5e7eb;
-  color: #374151;
+.as-name {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
 }
 
 
-/* BUTTON ROW */
-.analysis-btn-row {
+/* ============================================================ */
+/*                           BUTTONS                            */
+/* ============================================================ */
+
+.as-btn-row {
   display: flex;
   justify-content: center;
   gap: 10px;
 }
 
-/* DETAILS BUTTON STYLE */
-/* .details-button {
-  padding: 8px 16px;
-  background: #f3f4f6;
-  color: #1f2937;
-  border-radius: 8px;
-  font-size: 14px;
+/* Primary CTA (Sky-blue gradient) */
+.as-btn-primary {
+  padding: 10px 16px;
+  background: linear-gradient(90deg, #4da3ff, #89e0ff);
+  border-radius: 10px;
   text-decoration: none;
-  border: 1px solid #d1d5db;
+  color: #fff;
+  font-weight: 600;
   transition: 0.25s ease;
+  box-shadow: 0 4px 12px rgba(120, 180, 255, 0.35);
 }
 
-.details-button:hover {
-  background: #e5e7eb;
-  color: #111827;
-} */
-
-
-.details-button {
-    background: linear-gradient(90deg, var(--accent-2), var(--accent-1));
-    background-size: 200% 100%;
-    background-position: left;
-    color: #fff;
-    padding: 12px 20px;
-    border-radius: 10px;
-    border: none;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-position 0.4s ease, transform 0.2s ease;
-    text-decoration: none;
+.as-btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(120, 180, 255, 0.5);
 }
 
-.details-button:hover {
-    background-position: right;
-    transform: translateY(-2px);
+/* Secondary CTA (Glass button) */
+.as-btn-secondary {
+  padding: 10px 16px;
+  background: rgba(255,255,255,0.55);
+  border-radius: 10px;
+  text-decoration: none;
+  color: #333;
+  font-weight: 600;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(200,200,200,0.7);
+  transition: 0.3s ease;
+}
+
+.as-btn-secondary:hover {
+  transform: translateY(-3px);
+  background: rgba(255,255,255,0.75);
+}
+
+/* Coming Soon Badge */
+.as-soon {
+  display: inline-block;
+  padding: 6px 14px;
+  background: #eee;
+  border-radius: 8px;
+  color: #555;
+  font-size: 14px;
+}
+
+
+/* ============================================================ */
+/*                   STAGGERED ANIMATION                       */
+/* ============================================================ */
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeIn 0.6s ease forwards;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
