@@ -83,3 +83,48 @@
   background: #e5e7eb;
   color: #374151;
 }
+
+
+/* BUTTON ROW */
+.analysis-btn-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* DETAILS BUTTON STYLE */
+/* .details-button {
+  padding: 8px 16px;
+  background: #f3f4f6;
+  color: #1f2937;
+  border-radius: 8px;
+  font-size: 14px;
+  text-decoration: none;
+  border: 1px solid #d1d5db;
+  transition: 0.25s ease;
+}
+
+.details-button:hover {
+  background: #e5e7eb;
+  color: #111827;
+} */
+
+
+.details-button {
+    background: linear-gradient(90deg, var(--accent-2), var(--accent-1));
+    background-size: 200% 100%;
+    background-position: left;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-position 0.4s ease, transform 0.2s ease;
+    text-decoration: none;
+}
+
+.details-button:hover {
+    background-position: right;
+    transform: translateY(-2px);
+}

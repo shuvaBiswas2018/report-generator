@@ -10,6 +10,8 @@ import AnalysisSelection from "./components/AnalysisSelection";
 import MyProfile from "./pages/MyProfile";
 // import AnalysisPage from './components/AnalysisPage';
 import EnergyAnalysis from './components/EnergyAnalysis';
+import EnergyAnalysisDetails from "./analysisDetails/EnergyAnalysisDetails";
+
 import Contact from './pages/Contact';
 // import Login from './pages/Login';
 // import ForgotPassword from "./pages/ForgotPassword";
@@ -47,6 +49,8 @@ export default function App() {
 
                 {/* Real analysis page */}
                 <Route path="/analysis/energy" element={<EnergyAnalysis />} />
+                <Route path="/analysis-details/:type" element={<EnergyAnalysisDetails />} />
+
                 <Route path="/contact" element={<Contact />} />
 
                 {/* Public app pages (anyone can browse) */}
