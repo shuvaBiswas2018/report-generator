@@ -306,3 +306,160 @@ html {
         gap: 10px
     }
 }
+
+
+/* -------------------------------------------------- */
+/* ENERGY INSIGHTS SECTION */
+/* -------------------------------------------------- */
+
+.energy-cap-section {
+  padding: 60px 20px;
+  background: #f8fafc;
+}
+
+.cap-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.cap-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.cap-subtitle {
+  max-width: 900px;
+  margin: 12px auto 40px;
+  color: #475569;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+/* GRID LAYOUT */
+.cap-grid {
+  display: flex;
+  gap: 40px;
+  margin-top: 20px;
+  text-align: left;
+}
+
+/* LEFT COLUMN */
+.cap-left {
+  width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cap-item {
+  font-size: 20px;
+  color: #1e293b;
+  cursor: pointer;
+  padding-left: 0;
+  transition: 0.25s ease;
+}
+
+.cap-item.active {
+  color: #0284c7;
+  font-weight: 700;
+  border-left: 6px solid #f97316;
+  padding-left: 12px;
+}
+
+.cap-item:hover {
+  color: #0ea5e9;
+}
+
+/* DIVIDER */
+.cap-divider {
+  width: 1px;
+  background: #e2e8f0;
+}
+
+/* RIGHT COLUMN */
+.cap-right {
+  flex: 1;
+  padding-left: 10px;
+}
+
+.cap-right-tag {
+  font-weight: 700;
+  color: #0284c7;
+  font-size: 18px;
+}
+
+.cap-right-title {
+  font-size: 34px;
+  font-weight: 800;
+  margin: 8px 0 16px;
+  color: #0f172a;
+}
+
+.cap-right-desc {
+  font-size: 17px;
+  line-height: 1.7;
+  color: #475569;
+  margin-bottom: 22px;
+}
+
+.cap-btn {
+  padding: 12px 22px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  background: linear-gradient(90deg, #7c3aed, #06b6d4);
+  color: white;
+  transition: 0.3s ease;
+}
+
+.cap-btn:hover {
+  transform: translateY(-2px);
+  background-position: right;
+}
+
+
+
+/* WHY CHOOSE INSIGHTFLOW */
+.why-section {
+  padding: 60px 20px;
+  background: linear-gradient(90deg, #f8fafc, #eef2ff);
+  margin-top: 40px;
+}
+
+.why-title {
+  text-align: center;
+  font-size: 28px;
+  font-weight: 800;
+  margin-bottom: 30px;
+}
+
+.why-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+.why-card {
+  background: white;
+  border-radius: 14px;
+  padding: 28px;
+  border: 1px solid rgba(0,0,0,0.08);
+  text-align: center;
+  transition: 0.3s ease;
+}
+
+.why-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.15);
+}
+
+.why-icon {
+  font-size: 38px;
+  margin-bottom: 12px;
+}

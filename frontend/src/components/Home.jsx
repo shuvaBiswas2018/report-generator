@@ -8,6 +8,43 @@ export default function Home() {
 
   const leadText = `InsightFlow uncovers the stories inside your spreadsheets and turns them into actionable, stakeholder-ready intelligence. Upload CSV or Excel files and let our automated pipelines detect trends, surface anomalies and prepare polished reports.`;
 
+
+  const [activeIndex, setActiveIndex] = React.useState(0);
+
+const featureData = [
+  {
+    tag: "Business performance",
+    title: "Track operational performance with real-time clarity",
+    desc: "Identify bottlenecks, improve productivity, and understand how your business is performing across departments using automated dashboards and AI-generated insights."
+  },
+  {
+    tag: "Workforce & attendance",
+    title: "Improve workforce efficiency with smart attendance analytics",
+    desc: "Detect absenteeism trends, shift inefficiencies, and optimize staffing decisions using daily, weekly, and monthly attendance insights powered by machine learning."
+  },
+  {
+    tag: "Financial insights",
+    title: "Make data-driven financial decisions with confidence",
+    desc: "Analyze revenue patterns, cost leakage, cash-flow fluctuations, and financial risks instantly. Turn spreadsheets into actionable financial intelligence."
+  },
+  {
+    tag: "Energy & consumption",
+    title: "Understand and optimize your energy consumption",
+    desc: "Measure energy usage, find abnormal spikes, reduce wastage, and control operating costs using AI-guided consumption breakdowns and trend detection."
+  },
+  {
+    tag: "Asset & equipment health",
+    title: "Predict equipment failures before they happen",
+    desc: "Use data-driven diagnostics to detect performance issues, reduce downtime, and extend the life of machinery and electrical assets."
+  },
+  {
+    tag: "Sustainability metrics",
+    title: "Track and improve your environmental impact",
+    desc: "Monitor CO₂ footprint, track power quality, and understand how operational decisions influence sustainability targets."
+  }
+];
+
+
   return (
     <main className="home-page">
       {/* Top nav placeholder (optional) */}
@@ -106,6 +143,108 @@ export default function Home() {
           <button className="btn-primary" onClick={() => navigate('/analysis-selection')} type="button">Try InsightFlow</button>
         </div>
       </section>
+
+
+      {/* --------------------------------------------- */}
+{/* NEW SECTION — ENERGY CAPABILITIES */}
+{/* --------------------------------------------- */}
+<section className="energy-cap-section">
+  <div className="cap-container">
+
+    {/* SECTION HEADING */}
+    <h2 className="cap-title">
+  AI-Powered Insights Across Every Business Dimension
+</h2>
+
+<p className="cap-subtitle">
+  InsightFlow transforms your raw spreadsheets into intelligent, decision-ready analytics — 
+  empowering teams across operations, finance, workforce, assets, and sustainability with 
+  automated insights and real-time visibility.
+</p>
+
+
+    {/* MAIN TWO-COLUMN LAYOUT */}
+    <div className="cap-grid">
+
+      {/* LEFT SIDE : Feature Menu */}
+      <div className="cap-left">
+
+        {[
+  "Business performance",
+  "Workforce & attendance",
+  "Financial insights",
+  "Asset & equipment health",
+  "Sustainability metrics"
+].map((item, idx) => (
+  <div
+    key={idx}
+    className={`cap-item ${activeIndex === idx ? "active" : ""}`}
+    onClick={() => setActiveIndex(idx)}
+  >
+    {item}
+  </div>
+))
+}
+
+      </div>
+
+      {/* DIVIDER */}
+      <div className="cap-divider"></div>
+
+      {/* RIGHT SIDE : Feature Details */}
+      <div className="cap-right">
+        <span className="cap-right-tag">{featureData[activeIndex].tag}</span>
+        <h3 className="cap-right-title">{featureData[activeIndex].title}</h3>
+        <p className="cap-right-desc">{featureData[activeIndex].desc}</p>
+
+        <button className="cap-btn">Learn more</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+
+{/* --------------------------------------------- */}
+{/* NEW SECTION 2 — WHY CHOOSE INSIGHTFLOW */}
+{/* --------------------------------------------- */}
+<section className="why-section">
+  <div className="container">
+
+    <h2 className="why-title">Why Teams Choose InsightFlow</h2>
+
+    <div className="why-grid">
+
+      <div className="why-card">
+        <div className="why-icon">🔐</div>
+        <h4>Secure Infrastructure</h4>
+        <p>Role-based access control and enterprise-grade encryption ensure data safety.</p>
+      </div>
+
+      <div className="why-card">
+        <div className="why-icon">⚙️</div>
+        <h4>Automated Pipelines</h4>
+        <p>No manual work — upload data and get stakeholder-ready insights instantly.</p>
+      </div>
+
+      <div className="why-card">
+        <div className="why-icon">📥</div>
+        <h4>Easy Integrations</h4>
+        <p>Connect with existing databases, cloud systems, and analytics workflows.</p>
+      </div>
+
+      <div className="why-card">
+        <div className="why-icon">🚀</div>
+        <h4>Fast & Reliable</h4>
+        <p>Generate deep insights in seconds with zero setup or installation.</p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
     </main>
   );
 }

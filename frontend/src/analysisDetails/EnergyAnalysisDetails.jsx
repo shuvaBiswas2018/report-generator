@@ -329,7 +329,7 @@ const [currencySymbol, setCurrencySymbol] = useState("₹");
                         {featureData[activeFeature].desc}
                     </p>
 
-                    <button className="pf-primary" style={{ padding: "10px 24px" }}>
+                    <button className="btn-primary" style={{ padding: "10px 10px" }}>
                         Learn more
                     </button>
 
