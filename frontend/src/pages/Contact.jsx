@@ -64,7 +64,7 @@ export default function Contact() {
 
     return (
         <div className="pf-page contact-animate">
-            <div style={{ maxWidth: 1100, margin: '32px auto' }}>
+            <div style={{ maxWidth: 1100, margin: '40px auto' }}>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 20 }}>
 

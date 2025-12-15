@@ -314,7 +314,7 @@ html {
 
 .energy-cap-section {
   padding: 60px 20px;
-  background: #f8fafc;
+  /* background: #f8fafc; */
 }
 
 .cap-container {
@@ -426,8 +426,8 @@ html {
 /* WHY CHOOSE INSIGHTFLOW */
 .why-section {
   padding: 60px 20px;
-  background: linear-gradient(90deg, #f8fafc, #eef2ff);
-  margin-top: 40px;
+  /* background: linear-gradient(90deg, #f8fafc, #eef2ff); */
+  margin-top: 10px;
 }
 
 .why-title {
@@ -462,4 +462,71 @@ html {
 .why-icon {
   font-size: 38px;
   margin-bottom: 12px;
+}
+
+
+
+/* --------------------------------------------- */
+/* NEW METRICS SECTION — MODERN GLASS DESIGN */
+/* --------------------------------------------- */
+.metrics-modern {
+  padding: 70px 20px;
+  /* background: radial-gradient(circle at top, #eef2ff, #f8fafc); */
+}
+
+.metrics-modern .metrics-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px;
+}
+
+/* CARD DESIGN */
+.metric-modern-card {
+  background: radial-gradient(circle at top, #eef2ff, #eef4fa);
+  backdrop-filter: blur(12px);
+  border-radius: 18px;
+  padding: 28px;
+  text-align: center;
+  border: 2px solid rgba(237, 235, 235, 0.5);
+  position: relative;
+  overflow: hidden;
+  transition: 0.35s ease;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.metric-modern-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+}
+
+/* ICON WRAPPER */
+.metric-icon-wrap {
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 32px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+/* NUMBERS */
+.metric-number {
+  font-size: 30px;
+  font-weight: 800;
+  margin: 10px 0 4px;
+  color: #0f172a;
+}
+
+/* LABEL */
+.metric-label {
+  color: #475569;
+  font-size: 16px;
+  font-weight: 500;
 }

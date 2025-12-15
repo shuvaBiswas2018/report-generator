@@ -56,12 +56,22 @@ body {
 .pf-brand {
     display: flex;
     align-items: center;
-    gap: 12px;
+    justify-content: center;
+    cursor: pointer;
 }
 
 .pf-logo {
-    height: 42px;
+    height: 60px !important;
+    width: auto !important;
+    object-fit: contain;
+    display: block;
 }
+
+
+.pf-logo:hover {
+    transform: scale(1.05);
+}
+
 
 .pf-brand-text .pf-title {
     font-size: 20px;

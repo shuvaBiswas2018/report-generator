@@ -71,12 +71,12 @@ export default function Header() {
                     onClick={() => navigate('/')}
                     style={{ cursor: 'pointer' }}
                 >
-                    <img src="/images/efficioTech_logo.png" alt="InsightFlow" className="pf-logo" />
+                    <img src="/images/94703857126.png" alt="InsightFlow" className="pf-logo" />
 
-                    <div className="pf-brand-text">
+                    {/* <div className="pf-brand-text">
                         <div className="pf-title">InsightFlow</div>
                         <div className="pf-sub">Enterprise Analytics</div>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* ---------------- RIGHT CONTROLS ---------------- */}
