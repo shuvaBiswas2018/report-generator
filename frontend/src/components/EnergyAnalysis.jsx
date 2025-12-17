@@ -1,26 +1,15 @@
-// src/components/EnergyAnalysis.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import * as XLSX from "xlsx";
-// import GraphRenderer from "./GraphRenderer";
 
 export default function EnergyAnalysis() {
   const navigate = useNavigate();
-  const [country, setCountry] = useState("");
-  const [currencySymbol, setCurrencySymbol] = useState("₹");
 
+  /* -------------------- CONSTANTS -------------------- */
   const COUNTRY_LIST = [
-    "India",
-    "USA",
-    "UK",
-    "Europe",
-    "Australia",
-    "Canada",
-    "UAE",
-    "Singapore",
-    "Japan",
+    "India", "USA", "UK", "Europe",
+    "Australia", "Canada", "UAE",
+    "Singapore", "Japan"
   ];
-
 
   const CURRENCY_MAP = {
     India: "₹",
@@ -34,224 +23,243 @@ export default function EnergyAnalysis() {
     Japan: "¥",
   };
 
-  const handleCountryChange = (value) => {
-    setCountry(value);
-    setCurrencySymbol(CURRENCY_MAP[value] || "₹");
-  };
+  const REPORT_TYPES = ["Monthly", "Quarterly", "Half-Yearly", "Yearly"];
 
+  const GRAPH_TITLES = [
+    "Daily Energy Consumption",
+    "Monthly Energy Trend",
+    "Yearly Consumption Overview",
+    "Peak Hour Analysis",
+    "Off-Peak Usage Pattern",
+    "Weekday vs Weekend Usage",
+    "Load Distribution Curve",
+    "Energy Intensity per Employee",
+    "Seasonal Consumption Pattern",
+    "Base Load Identification",
+    "Abnormal Spike Detection",
+    "Energy Cost Impact",
+    "Tariff Sensitivity Analysis",
+    "Equipment Usage Pattern",
+    "Energy Efficiency Indicator",
+    "Consumption Forecast Preview",
+  ];
 
-  // FORM FIELDS
+  /* -------------------- FORM STATE -------------------- */
   const [companyName, setCompanyName] = useState("");
+  const [country, setCountry] = useState("");
+  const [currency, setCurrency] = useState("₹");
   const [companyArea, setCompanyArea] = useState("");
   const [employees, setEmployees] = useState("");
   const [tariff, setTariff] = useState("");
-  const [file, setFile] = useState(null);
+  const [reportType, setReportType] = useState("");
+  const [fileUploaded, setFileUploaded] = useState(false);
 
-  // DATA EXTRACTED FROM FILE
-  const [dataset, setDataset] = useState([]);
-  const [graphOptionsVisible, setGraphOptionsVisible] = useState(false);
-  const [selectedGraph, setSelectedGraph] = useState(null);
+  /* -------------------- REPORT STATE -------------------- */
+  const [showReport, setShowReport] = useState(false);
 
-  // GRAPH TYPES
-  const graphTypes = [
-    "Daily Consumption",
-    "Monthly Trend",
-    "Weekday Pattern",
-    "Peak Hour Analysis"
-  ];
+  const [insights, setInsights] = useState(
+    GRAPH_TITLES.map(
+      () =>
+        "This insight is auto-generated based on observed energy patterns. You can edit it to match operational context."
+    )
+  );
 
-  /* -------------------------------------- */
-  /* FILE PARSER */
-  /* -------------------------------------- */
-  const handleFileUpload = (e) => {
-    const uploaded = e.target.files[0];
-    if (!uploaded) return;
+  const [saving, setSaving] = useState(
+    GRAPH_TITLES.map(() => "idle") // idle | saving | saved
+  );
 
-    setFile(uploaded);
-
-    const reader = new FileReader();
-    reader.onload = (evt) => {
-      const workbook = XLSX.read(evt.target.result, { type: "binary" });
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const json = XLSX.utils.sheet_to_json(sheet);
-
-      if (!json.length) return;
-
-      // Auto-detect date column
-      const firstRow = json[0];
-      const keys = Object.keys(firstRow);
-      const dateKey = keys.find(
-        (k) =>
-          k.toLowerCase().includes("date") ||
-          k.toLowerCase().includes("time") ||
-          k.toLowerCase().includes("timestamp")
-      );
-
-      json.forEach((row) => {
-        const dt = new Date(row[dateKey]);
-
-        if (!isNaN(dt)) {
-          row.__date = dt.toISOString().split("T")[0];
-          row.__year = dt.getFullYear();
-          row.__month = dt.getMonth() + 1;
-          row.__day = dt.getDate();
-          row.__weekday = dt.toLocaleString("en-US", { weekday: "long" });
-          row.__week = Math.ceil((dt.getDate() + dt.getDay()) / 7);
-          row.__hour = dt.getHours();
-        }
-      });
-
-      setDataset(json);
-      setGraphOptionsVisible(true);
-    };
-
-    reader.readAsBinaryString(uploaded);
+  /* -------------------- HANDLERS -------------------- */
+  const handleCountryChange = (value) => {
+    setCountry(value);
+    setCurrency(CURRENCY_MAP[value] || "₹");
   };
+
+  const handleFileUpload = (e) => {
+    if (e.target.files.length > 0) {
+      setFileUploaded(true);
+      setShowReport(true);
+    }
+  };
+
+  const saveInsight = async (index) => {
+    const updated = [...saving];
+    updated[index] = "saving";
+    setSaving(updated);
+
+    // Simulated API save
+    setTimeout(() => {
+      updated[index] = "saved";
+      setSaving([...updated]);
+    }, 800);
+  };
+
+  const downloadReport = async (format) => {
+  const res = await fetch(`http://localhost:8000/download-report/${format}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      companyName,
+      reportType,
+      insights
+    })
+  });
+
+  const blob = await res.blob();
+
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${companyName}_${reportType}_Energy_Report.${format}`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
+};
+
+
+  /* -------------------- REPORT HEADING -------------------- */
+  const reportHeading = reportType
+    ? `${reportType} Energy Consumption Report`
+    : "Energy Consumption Report";
 
   return (
     <div className="pf-page" style={{ padding: "80px 100px" }}>
-
-      {/* -------------------------------------- */}
-      {/* 1. HEADING */}
-      {/* -------------------------------------- */}
-      <h1 style={{ fontSize: 32, fontWeight: 800, marginBottom: 10 }}>
+      {/* PAGE HEADING */}
+      <h1 style={{ fontSize: 32, fontWeight: 800 }}>
         Energy Consumption Analysis
       </h1>
 
-      {/* -------------------------------------- */}
-      {/* 2. BASIC INSTRUCTIONS */}
-      {/* -------------------------------------- */}
-      <div className="pf-card" style={{ padding: 20, marginBottom: 20 }}>
-        <h3>How This Works</h3>
-        <ul style={{ lineHeight: 1.7, marginLeft: 20 }}>
-          <li>Upload your CSV or Excel dataset.</li>
-          <li>We extract Date, Month, Year, Weekday, Week, Hour etc.</li>
-          <li>Choose from different graph types.</li>
-          <li>View visualized insights instantly.</li>
-          <li>You can modify insights using natural language prompts.</li>
+      {/* INSTRUCTIONS */}
+      <div className="pf-card" style={{ padding: 20, margin: "16px 0" }}>
+        <h3>How it works</h3>
+        <ul style={{ marginLeft: 18, lineHeight: 1.7 }}>
+          <li>Upload CSV or Excel energy data</li>
+          <li>Select report type (monthly, quarterly, etc.)</li>
+          <li>System generates visual insights automatically</li>
+          <li>Edit and save insights as needed</li>
+          <li>Download report in PDF, Word, or PowerPoint</li>
         </ul>
       </div>
 
-      {/* -------------------------------------- */}
-      {/* 3. DETAILS PAGE BUTTON */}
-      {/* -------------------------------------- */}
-      <div style={{ textAlign: "right", marginBottom: 25 }}>
+      {/* DETAILS PAGE */}
+      <div style={{ textAlign: "right", marginBottom: 20 }}>
         <button
           className="btn-primary"
-          style={{ padding: "10px 20px" }}
           onClick={() => navigate("/analysis-details/energy")}
         >
           View Detailed Energy Insights →
         </button>
       </div>
 
-      {/* -------------------------------------- */}
-      {/* 4. BEAUTIFUL FORM SECTION */}
-      {/* -------------------------------------- */}
+      {/* FORM */}
       <div className="ea-form-card">
         <h3 className="ea-form-title">Company Information</h3>
 
         <div className="ea-form-grid">
-          {/* COMPANY NAME */}
           <div className="ea-field">
             <label>Company Name *</label>
-            <input
-              type="text"
-              value={companyName}
-              onChange={(e) => setCompanyName(e.target.value)}
-              required
-            />
+            <input value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
           </div>
-          {/* COUNTRY */}
+
           <div className="ea-field">
             <label>Country *</label>
-            <select
-              value={country}
-              onChange={(e) => handleCountryChange(e.target.value)}
-              className="ea-select"
-            >
+            <select value={country} onChange={(e) => handleCountryChange(e.target.value)}>
               <option value="">Select Country</option>
               {COUNTRY_LIST.map((c) => (
-                <option key={c} value={c}>{c}</option>
+                <option key={c}>{c}</option>
               ))}
             </select>
           </div>
 
-
-
-          {/* AREA */}
           <div className="ea-field">
-            <label>Company Area (Optional)</label>
-            <input
-              type="text"
-              value={companyArea}
-              onChange={(e) => setCompanyArea(e.target.value)}
-            />
+            <label>Company Area</label>
+            <input value={companyArea} onChange={(e) => setCompanyArea(e.target.value)} />
           </div>
 
-          {/* EMPLOYEES */}
           <div className="ea-field">
-            <label>No. of Employees (Optional)</label>
-            <input
-              type="number"
-              value={employees}
-              onChange={(e) => setEmployees(e.target.value)}
-            />
+            <label>No. of Employees</label>
+            <input type="number" value={employees} onChange={(e) => setEmployees(e.target.value)} />
           </div>
 
-          {/* TARIFF */}
           <div className="ea-field">
-            <label>Electricity Tariff ({currencySymbol}/kWh)</label>
-            <input
-              type="number"
-              value={tariff}
-              onChange={(e) => setTariff(e.target.value)}
-            />
+            <label>Electricity Tariff ({currency}/kWh)</label>
+            <input type="number" value={tariff} onChange={(e) => setTariff(e.target.value)} />
           </div>
 
-          {/* FILE UPLOAD */}
+          <div className="ea-field">
+            <label>Report Type *</label>
+            <select value={reportType} onChange={(e) => setReportType(e.target.value)}>
+              <option value="">Select Report Type</option>
+              {REPORT_TYPES.map((r) => (
+                <option key={r}>{r}</option>
+              ))}
+            </select>
+          </div>
+
           <div className="ea-field file-field">
             <label>Upload Energy Data (CSV / Excel)</label>
-            <input
-              type="file"
-              accept=".csv,.xlsx"
-              onChange={handleFileUpload}
-              style={{ cursor: "pointer" }}
-            />
+            <input type="file" accept=".csv,.xlsx" onChange={handleFileUpload} />
           </div>
-        </div>
-
-        {/* -------------------------------------- */}
-        {/* BUTTONS INSIDE FORM CARD */}
-        {/* -------------------------------------- */}
-        <div className="ea-form-actions-inside">
-          <button
-            className="btn-primary"
-            type="button"
-            onClick={() => alert("Form submitted successfully!")}
-          >
-            Submit
-          </button>
-
-          <button
-            className="pf-ghost"
-            type="button"
-            onClick={() => {
-              setCompanyName("");
-              setCompanyArea("");
-              setEmployees("");
-              setTariff("");
-              setCountry("");
-              setCurrencySymbol("₹");
-              setFile(null);
-            }}
-          >
-            Reset
-          </button>
         </div>
       </div>
 
+      {/* REPORT UI */}
+      {showReport && (
+        <div className="ea-report-wrapper" style={{ marginTop: 40 }}>
+          <h2 style={{ fontWeight: 800 }}>{reportHeading}</h2>
+          <p className="pf-muted">Automatically generated insights (editable)</p>
 
+          {/* DOWNLOAD BUTTONS */}
+          <div style={{ display: "flex", gap: 12, margin: "20px 0" }}>
+            <button className="btn-primary" onClick={() => downloadReport("pdf")}>
+              Download PDF
+            </button>
+            <button className="btn-primary" onClick={() => downloadReport("word")}>
+              Download Word
+            </button>
+            <button className="btn-primary" onClick={() => downloadReport("ppt")}>
+              Download PowerPoint
+            </button>
+          </div>
+
+          <div className="ea-report-grid">
+            {GRAPH_TITLES.map((title, index) => (
+              <div key={index} className="ea-report-card">
+                <h4>{title}</h4>
+
+                <div className="ea-graph-placeholder">
+                  📊 Graph Placeholder
+                </div>
+
+                <textarea
+                  className="ea-insight-box"
+                  rows={4}
+                  value={insights[index]}
+                  onChange={(e) => {
+                    const updated = [...insights];
+                    updated[index] = e.target.value;
+                    setInsights(updated);
+
+                    const s = [...saving];
+                    s[index] = "idle";
+                    setSaving(s);
+                  }}
+                />
+
+                <button
+                  className="btn-primary small"
+                  disabled={saving[index] === "saving"}
+                  onClick={() => saveInsight(index)}
+                >
+                  {saving[index] === "idle" && "Save Insight"}
+                  {saving[index] === "saving" && "Saving..."}
+                  {saving[index] === "saved" && "Saved ✓"}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
