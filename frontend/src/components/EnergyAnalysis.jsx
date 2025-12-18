@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+
+
 
 export default function EnergyAnalysis() {
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
 
   /* -------------------- CONSTANTS -------------------- */
   const COUNTRY_LIST = [
@@ -53,6 +56,7 @@ export default function EnergyAnalysis() {
   const [tariff, setTariff] = useState("");
   const [reportType, setReportType] = useState("");
   const [fileUploaded, setFileUploaded] = useState(false);
+  const [showDownloadMenu, setShowDownloadMenu] = useState(false);
 
   /* -------------------- REPORT STATE -------------------- */
   const [showReport, setShowReport] = useState(false);
@@ -114,6 +118,33 @@ export default function EnergyAnalysis() {
   a.click();
   a.remove();
   window.URL.revokeObjectURL(url);
+};
+
+const resetForm = () => {
+  setCompanyName("");
+  setCountry("");
+  setCurrency("₹");
+  setCompanyArea("");
+  setEmployees("");
+  setTariff("");
+  setReportType("");
+  setFileUploaded(false);
+  setShowReport(false);
+  setShowDownloadMenu(false);
+
+  // Reset insights & save states
+  setInsights(
+    GRAPH_TITLES.map(
+      () =>
+        "This insight is auto-generated based on observed energy patterns. You can edit it to match operational context."
+    )
+  );
+  setSaving(GRAPH_TITLES.map(() => "idle"));
+
+  // / ✅ CLEAR FILE INPUT VISUALLY
+  if (fileInputRef.current) {
+    fileInputRef.current.value = "";
+  }
 };
 
 
@@ -198,9 +229,26 @@ export default function EnergyAnalysis() {
 
           <div className="ea-field file-field">
             <label>Upload Energy Data (CSV / Excel)</label>
-            <input type="file" accept=".csv,.xlsx" onChange={handleFileUpload} />
+            <input
+  ref={fileInputRef}
+  type="file"
+  accept=".csv,.xlsx"
+  onChange={handleFileUpload}
+/>
+
           </div>
         </div>
+        
+        <div style={{ marginTop: 20, display: "flex", justifyContent: "flex-end" }}>
+  <button
+    className="pf-ghost"
+    type="button"
+    onClick={resetForm}
+  >
+    Reset
+  </button>
+</div>
+
       </div>
 
       {/* REPORT UI */}
@@ -210,17 +258,55 @@ export default function EnergyAnalysis() {
           <p className="pf-muted">Automatically generated insights (editable)</p>
 
           {/* DOWNLOAD BUTTONS */}
-          <div style={{ display: "flex", gap: 12, margin: "20px 0" }}>
-            <button className="btn-primary" onClick={() => downloadReport("pdf")}>
-              Download PDF
-            </button>
-            <button className="btn-primary" onClick={() => downloadReport("word")}>
-              Download Word
-            </button>
-            <button className="btn-primary" onClick={() => downloadReport("ppt")}>
-              Download PowerPoint
-            </button>
-          </div>
+          <div style={{ position: "relative", display: "inline-block" }}>
+
+  {/* MAIN DOWNLOAD BUTTON */}
+  <button
+    className="btn-primary"
+    onClick={() => setShowDownloadMenu(!showDownloadMenu)}
+  >
+    Download Report ⬇️
+  </button>
+
+  {/* DROPDOWN MENU */}
+  {showDownloadMenu && (
+    <div
+      style={{
+        position: "absolute",
+        top: "110%",
+        right: 0,
+        background: "#fff",
+        border: "1px solid #e5e7eb",
+        borderRadius: 8,
+        boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+        minWidth: 180,
+        zIndex: 10,
+      }}
+    >
+      <div
+        className="download-item"
+        onClick={() => downloadReport("pdf")}
+      >
+        📄 Download as PDF
+      </div>
+
+      <div
+        className="download-item"
+        onClick={() => downloadReport("docx")}
+      >
+        📝 Download as Word
+      </div>
+
+      <div
+        className="download-item"
+        onClick={() => downloadReport("pptx")}
+      >
+        📊 Download as PowerPoint
+      </div>
+    </div>
+  )}
+</div>
+
 
           <div className="ea-report-grid">
             {GRAPH_TITLES.map((title, index) => (
