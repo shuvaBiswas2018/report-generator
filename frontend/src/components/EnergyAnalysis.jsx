@@ -1,8 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
-
-
 export default function EnergyAnalysis() {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
@@ -55,12 +53,10 @@ export default function EnergyAnalysis() {
   const [employees, setEmployees] = useState("");
   const [tariff, setTariff] = useState("");
   const [reportType, setReportType] = useState("");
-  const [fileUploaded, setFileUploaded] = useState(false);
+  const [showReport, setShowReport] = useState(false);
   const [showDownloadMenu, setShowDownloadMenu] = useState(false);
 
-  /* -------------------- REPORT STATE -------------------- */
-  const [showReport, setShowReport] = useState(false);
-
+  /* -------------------- INSIGHTS -------------------- */
   const [insights, setInsights] = useState(
     GRAPH_TITLES.map(
       () =>
@@ -69,7 +65,7 @@ export default function EnergyAnalysis() {
   );
 
   const [saving, setSaving] = useState(
-    GRAPH_TITLES.map(() => "idle") // idle | saving | saved
+    GRAPH_TITLES.map(() => "idle")
   );
 
   /* -------------------- HANDLERS -------------------- */
@@ -80,82 +76,72 @@ export default function EnergyAnalysis() {
 
   const handleFileUpload = (e) => {
     if (e.target.files.length > 0) {
-      setFileUploaded(true);
       setShowReport(true);
     }
   };
 
-  const saveInsight = async (index) => {
-    const updated = [...saving];
-    updated[index] = "saving";
-    setSaving(updated);
+  const saveInsight = (index) => {
+    const s = [...saving];
+    s[index] = "saving";
+    setSaving(s);
 
-    // Simulated API save
     setTimeout(() => {
-      updated[index] = "saved";
-      setSaving([...updated]);
+      s[index] = "saved";
+      setSaving([...s]);
     }, 800);
   };
 
   const downloadReport = async (format) => {
-  const res = await fetch(`http://localhost:8000/download-report/${format}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      companyName,
-      reportType,
-      insights
-    })
-  });
+    const res = await fetch(`http://localhost:8000/download-report/${format}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        companyName,
+        reportType,
+        insights,
+      }),
+    });
 
-  const blob = await res.blob();
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
 
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = `${companyName}_${reportType}_Energy_Report.${format}`;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  window.URL.revokeObjectURL(url);
-};
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${companyName}_${reportType}_Energy_Report.${format}`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
 
-const resetForm = () => {
-  setCompanyName("");
-  setCountry("");
-  setCurrency("₹");
-  setCompanyArea("");
-  setEmployees("");
-  setTariff("");
-  setReportType("");
-  setFileUploaded(false);
-  setShowReport(false);
-  setShowDownloadMenu(false);
+  const resetForm = () => {
+    setCompanyName("");
+    setCountry("");
+    setCurrency("₹");
+    setCompanyArea("");
+    setEmployees("");
+    setTariff("");
+    setReportType("");
+    setShowReport(false);
+    setShowDownloadMenu(false);
 
-  // Reset insights & save states
-  setInsights(
-    GRAPH_TITLES.map(
-      () =>
-        "This insight is auto-generated based on observed energy patterns. You can edit it to match operational context."
-    )
-  );
-  setSaving(GRAPH_TITLES.map(() => "idle"));
+    setInsights(
+      GRAPH_TITLES.map(
+        () =>
+          "This insight is auto-generated based on observed energy patterns. You can edit it to match operational context."
+      )
+    );
+    setSaving(GRAPH_TITLES.map(() => "idle"));
 
-  // / ✅ CLEAR FILE INPUT VISUALLY
-  if (fileInputRef.current) {
-    fileInputRef.current.value = "";
-  }
-};
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
-
-  /* -------------------- REPORT HEADING -------------------- */
   const reportHeading = reportType
     ? `${reportType} Energy Consumption Report`
     : "Energy Consumption Report";
 
   return (
     <div className="pf-page" style={{ padding: "80px 100px" }}>
-      {/* PAGE HEADING */}
       <h1 style={{ fontSize: 32, fontWeight: 800 }}>
         Energy Consumption Analysis
       </h1>
@@ -165,10 +151,10 @@ const resetForm = () => {
         <h3>How it works</h3>
         <ul style={{ marginLeft: 18, lineHeight: 1.7 }}>
           <li>Upload CSV or Excel energy data</li>
-          <li>Select report type (monthly, quarterly, etc.)</li>
-          <li>System generates visual insights automatically</li>
-          <li>Edit and save insights as needed</li>
-          <li>Download report in PDF, Word, or PowerPoint</li>
+          <li>Select report type</li>
+          <li>Insights are auto-generated</li>
+          <li>Edit and save insights</li>
+          <li>Download report</li>
         </ul>
       </div>
 
@@ -220,7 +206,7 @@ const resetForm = () => {
           <div className="ea-field">
             <label>Report Type *</label>
             <select value={reportType} onChange={(e) => setReportType(e.target.value)}>
-              <option value="">Select Report Type</option>
+              <option value="">Select</option>
               {REPORT_TYPES.map((r) => (
                 <option key={r}>{r}</option>
               ))}
@@ -228,94 +214,85 @@ const resetForm = () => {
           </div>
 
           <div className="ea-field file-field">
-            <label>Upload Energy Data (CSV / Excel)</label>
+            <label>Upload Energy Data</label>
             <input
-  ref={fileInputRef}
-  type="file"
-  accept=".csv,.xlsx"
-  onChange={handleFileUpload}
-/>
-
+              ref={fileInputRef}
+              type="file"
+              accept=".csv,.xlsx"
+              onChange={handleFileUpload}
+            />
           </div>
         </div>
-        
-        <div style={{ marginTop: 20, display: "flex", justifyContent: "flex-end" }}>
-  <button
-    className="pf-ghost"
-    type="button"
-    onClick={resetForm}
-  >
-    Reset
-  </button>
-</div>
 
+        <div style={{ marginTop: 20, display: "flex", justifyContent: "flex-end" }}>
+          <button className="pf-ghost" onClick={resetForm}>
+            Reset
+          </button>
+        </div>
       </div>
 
-      {/* REPORT UI */}
+      {/* REPORT */}
       {showReport && (
         <div className="ea-report-wrapper" style={{ marginTop: 40 }}>
-          <h2 style={{ fontWeight: 800 }}>{reportHeading}</h2>
-          <p className="pf-muted">Automatically generated insights (editable)</p>
+          {/* REPORT HEADER */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              marginBottom: 24,
+            }}
+          >
+            <div>
+              <h2 style={{ fontWeight: 800, margin: 0 }}>{reportHeading}</h2>
+              <p className="pf-muted" style={{ marginTop: 4 }}>
+                Automatically generated insights (editable)
+              </p>
+            </div>
 
-          {/* DOWNLOAD BUTTONS */}
-          <div style={{ position: "relative", display: "inline-block" }}>
+            <div style={{ position: "relative" }}>
+              <button
+                className="btn-primary"
+                onClick={() => setShowDownloadMenu(!showDownloadMenu)}
+              >
+                Download Report ⬇️
+              </button>
 
-  {/* MAIN DOWNLOAD BUTTON */}
-  <button
-    className="btn-primary"
-    onClick={() => setShowDownloadMenu(!showDownloadMenu)}
-  >
-    Download Report ⬇️
-  </button>
+              {showDownloadMenu && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "110%",
+                    right: 0,
+                    background: "#fff",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: 8,
+                    boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+                    minWidth: 200,
+                    zIndex: 10,
+                  }}
+                >
+                  <div className="download-item" onClick={() => downloadReport("pdf")}>
+                    📄 Download as PDF
+                  </div>
+                  <div className="download-item" onClick={() => downloadReport("docx")}>
+                    📝 Download as Word
+                  </div>
+                  <div className="download-item" onClick={() => downloadReport("pptx")}>
+                    📊 Download as PowerPoint
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
 
-  {/* DROPDOWN MENU */}
-  {showDownloadMenu && (
-    <div
-      style={{
-        position: "absolute",
-        top: "110%",
-        right: 0,
-        background: "#fff",
-        border: "1px solid #e5e7eb",
-        borderRadius: 8,
-        boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
-        minWidth: 180,
-        zIndex: 10,
-      }}
-    >
-      <div
-        className="download-item"
-        onClick={() => downloadReport("pdf")}
-      >
-        📄 Download as PDF
-      </div>
-
-      <div
-        className="download-item"
-        onClick={() => downloadReport("docx")}
-      >
-        📝 Download as Word
-      </div>
-
-      <div
-        className="download-item"
-        onClick={() => downloadReport("pptx")}
-      >
-        📊 Download as PowerPoint
-      </div>
-    </div>
-  )}
-</div>
-
-
+          {/* REPORT GRID */}
           <div className="ea-report-grid">
             {GRAPH_TITLES.map((title, index) => (
               <div key={index} className="ea-report-card">
                 <h4>{title}</h4>
 
-                <div className="ea-graph-placeholder">
-                  📊 Graph Placeholder
-                </div>
+                <div className="ea-graph-placeholder">📊 Graph Placeholder</div>
 
                 <textarea
                   className="ea-insight-box"
