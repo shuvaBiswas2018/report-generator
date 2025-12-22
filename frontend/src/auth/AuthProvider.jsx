@@ -34,32 +34,35 @@ export function AuthProvider({ children }) {
   }, [token, user]);
 
   const signup = async ({ name, email, password }) => {
-  const res = await fetch("http://localhost:8000/auth/signup", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, password })
-  });
+    const res = await fetch("http://localhost:8000/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password })
+    });
 
-  if (!res.ok) throw new Error("Signup failed");
+    if (!res.ok) throw new Error("Signup failed");
 
-  const data = await res.json();
-  setToken(data.access_token);
-  setUser(data.user);
-};
+    const data = await res.json();
+    setToken(data.access_token);
+    setUser(data.user);
+  };
 
   const signin = async ({ email, password }) => {
-  const res = await fetch("http://localhost:8000/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password })
-  });
+    const res = await fetch("http://localhost:8000/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
 
-  if (!res.ok) throw new Error("Login failed");
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.detail || "Login failed");
+    };
 
-  const data = await res.json();
-  setToken(data.access_token);
-  setUser(data.user);
-};
+    const data = await res.json();
+    setToken(data.access_token);
+    setUser(data.user);
+  };
 
   const signout = () => {
     setToken(null);

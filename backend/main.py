@@ -272,15 +272,21 @@ def login(data: LoginRequest):
 
         user = cur.fetchone()
 
+        # ❌ Email NOT found
         if not user:
-            raise HTTPException(status_code=401, detail="Invalid email or password")
-
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid email and password"
+            )
+        
         user_id, first_name, last_name, email, hashed_password = user
 
-        # Verify password
+        # 2️⃣ Email exists → check password
         if not verify_password(data.password, hashed_password):
-            raise HTTPException(status_code=401, detail="Invalid email or password")
-
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid password"
+            )
         # Create JWT token
         token = create_access_token({
             "sub": str(user_id),
@@ -297,6 +303,56 @@ def login(data: LoginRequest):
             }
         }
 
+    finally:
+        cur.close()
+        conn.close()
+
+
+@app.post("/api/contact")
+def contact_endpoint(request: dict):
+    # Here you would normally process the contact request,
+    # e.g., save it to the database or send an email.
+    #Save it to database
+    conn = get_db_connection()
+    cur = conn.cursor()
+    user_id = request.get("user_id")
+    if user_id is None:
+        cur.execute(
+                "SELECT id FROM public.users WHERE email = %s",
+                (request.get("email"),)
+        )
+        existing_user = cur.fetchone()
+
+        if existing_user:
+            user_id = existing_user[0]
+        else:
+            cur.execute("""INSERT INTO public.users (first_name, last_name, email, password)
+                        VALUES (%s, %s, %s, %s)
+                        RETURNING id""",
+                        (request.get("name").split(" ")[0],
+                        " ".join(request.get("name").split(" ")[1:]) if len(request.get("name").split(" ")) > 1 else "",
+                        request.get("email"),
+                        ""))
+            user_id = cur.fetchone()[0]
+        conn.commit()
+    try:
+        cur.execute(
+            """
+            INSERT INTO public.contact_requests (user_id, message, request_type_id, created_at)
+            VALUES (%s, %s, %s, %s)
+            """,
+            (
+                user_id,
+                request.get("message"),
+                request.get("infoType"),
+                datetime.utcnow()
+            )
+        )
+        conn.commit()
+        return {"status_code": 200, "detail": "Contact request submitted successfully."}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
     finally:
         cur.close()
         conn.close()

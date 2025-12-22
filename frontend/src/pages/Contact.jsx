@@ -5,7 +5,7 @@ import { useAuth } from '../auth/AuthProvider';
 export default function Contact() {
     const auth = useAuth();
     const user = auth?.user || null;
-
+    console.log("Contact page user:", user);
     // form state
     const [name, setName] = useState(user?.name || '');
     const [email, setEmail] = useState(user?.email || '');
@@ -15,6 +15,7 @@ export default function Contact() {
     const [success, setSuccess] = useState(null);
     const [serverError, setServerError] = useState(null);
     const [infoType, setInfoType] = useState('');
+
 
     useEffect(() => {
         if (user) {
@@ -41,10 +42,10 @@ export default function Contact() {
 
         setBusy(true);
         try {
-            const res = await fetch('/api/contact', {
+            const res = await fetch('http://localhost:8000/api/contact', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name: name.trim(), email: email.trim(), message: message.trim(), infoType }),
+                body: JSON.stringify({ user_id: user ? user.id : null, name: name.trim(), email: email.trim(), message: message.trim(), infoType }),
             });
 
             if (!res.ok) {
@@ -141,17 +142,17 @@ export default function Contact() {
                                 <select
                                     className="pf-input animated-input"
                                     value={infoType}
-                                    onChange={(e) => setInfoType(e.target.value)}
+                                    onChange={(e) => setInfoType(Number(e.target.value))}
                                     aria-invalid={!!errors.infoType}
                                     required
                                 >
                                     <option value="">-- Select --</option>
-                                    <option value="general">General Inquiry</option>
-                                    <option value="support">Technical Support</option>
-                                    <option value="pricing">Pricing Details</option>
-                                    <option value="partnership">Partnership & Collaboration</option>
-                                    <option value="report-help">Report / Analysis Help</option>
-                                    <option value="other">Other</option>
+                                    <option value="1">General Inquiry</option>
+                                    <option value="2">Technical Support</option>
+                                    <option value="3">Pricing Details</option>
+                                    <option value="4">Partnership & Collaboration</option>
+                                    <option value="5">Report / Analysis Help</option>
+                                    <option value="6">Other</option>
                                 </select>
                                 {errors.infoType && <div className="error-text">{errors.infoType}</div>}
 
@@ -201,8 +202,10 @@ export default function Contact() {
 
                                 {/* BUTTONS */}
                                 <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 14 }}>
-                                    <button type="submit" className="btn-primary" disabled={busy}>
+                                    <button type="submit" className="btn-primary"
+                                     disabled={busy}>
                                         {busy ? 'Sending...' : 'Send message'}
+                                        
                                     </button>
 
                                     <button
@@ -210,6 +213,7 @@ export default function Contact() {
                                         className="pf-outlined animated-outline-btn"
                                         onClick={() => {
                                             setMessage('');
+                                            setInfoType('');
                                             if (!user) {
                                                 setName('');
                                                 setEmail('');
