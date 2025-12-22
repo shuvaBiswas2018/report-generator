@@ -209,13 +209,11 @@ def signup(data: SignupRequest):
 
     conn = get_db_connection()
     cur = conn.cursor()
-    print("Signup data:", data)
     name_parts = data.name.strip().split(" ", 1)
     first_name = name_parts[0]
     last_name = name_parts[1] if len(name_parts) > 1 else ""
     email = data.email
     password = hash_password(data.password)
-    print(first_name, last_name, email, password)
     try:
         cur.execute(
             """
@@ -227,7 +225,6 @@ def signup(data: SignupRequest):
         )
 
         user = cur.fetchone()
-        print(user)
         conn.commit()
 
         if not user:
@@ -238,7 +235,6 @@ def signup(data: SignupRequest):
             "sub": str(user[0]),
             "email": user[3]
         })
-        print("Generated token:", token)
 
         return {
             "access_token": token,
@@ -258,21 +254,49 @@ def signup(data: SignupRequest):
         conn.close()
 
 
-# @app.post("/auth/login", response_model=TokenResponse)
-# def login(data: LoginRequest, db: Session = Depends(get_db)):
-#     print(data)
+@app.post("/auth/login", response_model=TokenResponse)
+def login(data: LoginRequest):
+    conn = get_db_connection()
+    cur = conn.cursor()
 
+    try:
+        # Fetch user by email
+        cur.execute(
+            """
+            SELECT id, first_name, last_name, email, password
+            FROM public.users
+            WHERE email = %s
+            """,
+            (data.email,)
+        )
 
-    # user = db.query(User).filter(User.email == data.email).first()
-    # print(user)
-    # print(data.email, data.password)
-    # if not user or not verify_password(data.password, user.password_hash):
-    #     raise HTTPException(status_code=401, detail="Invalid email or password")
+        user = cur.fetchone()
 
-    # token = create_access_token({"sub": str(user.id)})
+        if not user:
+            raise HTTPException(status_code=401, detail="Invalid email or password")
 
-    # return {
-    #     "access_token": token,
-    #     "token_type": "bearer",
-    #     "user": {"id": user.id, "name": user.name, "email": user.email}
-    # }
+        user_id, first_name, last_name, email, hashed_password = user
+
+        # Verify password
+        if not verify_password(data.password, hashed_password):
+            raise HTTPException(status_code=401, detail="Invalid email or password")
+
+        # Create JWT token
+        token = create_access_token({
+            "sub": str(user_id),
+            "email": email
+        })
+
+        return {
+            "access_token": token,
+            "token_type": "bearer",
+            "user": {
+                "id": user_id,
+                "name": f"{first_name} {last_name}".strip(),
+                "email": email
+            }
+        }
+
+    finally:
+        cur.close()
+        conn.close()

@@ -5,26 +5,6 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 const AUTH_KEY = 'insightflow_auth';
 const USERS_KEY = 'insightflow_users';
 
-// --- Fake API (demo only) ---
-// Replace these with real API calls (axios/fetch) when ready.
-// function fakeApiSignup({ name, email, password }) {
-//   const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
-//   if (users.find(u => u.email === email)) {
-//     return Promise.reject({ message: 'Email already registered' });
-//   }
-//   const user = { id: Date.now(), name, email, password };
-//   users.push(user);
-//   localStorage.setItem(USERS_KEY, JSON.stringify(users));
-//   return Promise.resolve({ token: 'fake-jwt-' + user.id, user: { id: user.id, name: user.name, email: user.email } });
-// }
-
-// function fakeApiLogin({ email, password }) {
-//   const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
-//   const user = users.find(u => u.email === email && u.password === password);
-//   if (!user) return Promise.reject({ message: 'Invalid credentials' });
-//   return Promise.resolve({ token: 'fake-jwt-' + user.id, user: { id: user.id, name: user.name, email: user.email } });
-// }
-
 const AuthContext = createContext(null);
 
 export function useAuth() {
