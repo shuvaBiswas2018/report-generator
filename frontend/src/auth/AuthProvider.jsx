@@ -7,23 +7,23 @@ const USERS_KEY = 'insightflow_users';
 
 // --- Fake API (demo only) ---
 // Replace these with real API calls (axios/fetch) when ready.
-function fakeApiSignup({ name, email, password }) {
-  const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
-  if (users.find(u => u.email === email)) {
-    return Promise.reject({ message: 'Email already registered' });
-  }
-  const user = { id: Date.now(), name, email, password };
-  users.push(user);
-  localStorage.setItem(USERS_KEY, JSON.stringify(users));
-  return Promise.resolve({ token: 'fake-jwt-' + user.id, user: { id: user.id, name: user.name, email: user.email } });
-}
+// function fakeApiSignup({ name, email, password }) {
+//   const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+//   if (users.find(u => u.email === email)) {
+//     return Promise.reject({ message: 'Email already registered' });
+//   }
+//   const user = { id: Date.now(), name, email, password };
+//   users.push(user);
+//   localStorage.setItem(USERS_KEY, JSON.stringify(users));
+//   return Promise.resolve({ token: 'fake-jwt-' + user.id, user: { id: user.id, name: user.name, email: user.email } });
+// }
 
-function fakeApiLogin({ email, password }) {
-  const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
-  const user = users.find(u => u.email === email && u.password === password);
-  if (!user) return Promise.reject({ message: 'Invalid credentials' });
-  return Promise.resolve({ token: 'fake-jwt-' + user.id, user: { id: user.id, name: user.name, email: user.email } });
-}
+// function fakeApiLogin({ email, password }) {
+//   const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+//   const user = users.find(u => u.email === email && u.password === password);
+//   if (!user) return Promise.reject({ message: 'Invalid credentials' });
+//   return Promise.resolve({ token: 'fake-jwt-' + user.id, user: { id: user.id, name: user.name, email: user.email } });
+// }
 
 const AuthContext = createContext(null);
 
@@ -54,18 +54,32 @@ export function AuthProvider({ children }) {
   }, [token, user]);
 
   const signup = async ({ name, email, password }) => {
-    const res = await fakeApiSignup({ name, email, password });
-    setToken(res.token);
-    setUser(res.user);
-    return res;
-  };
+  const res = await fetch("http://localhost:8000/auth/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, email, password })
+  });
+
+  if (!res.ok) throw new Error("Signup failed");
+
+  const data = await res.json();
+  setToken(data.access_token);
+  setUser(data.user);
+};
 
   const signin = async ({ email, password }) => {
-    const res = await fakeApiLogin({ email, password });
-    setToken(res.token);
-    setUser(res.user);
-    return res;
-  };
+  const res = await fetch("http://localhost:8000/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password })
+  });
+
+  if (!res.ok) throw new Error("Login failed");
+
+  const data = await res.json();
+  setToken(data.access_token);
+  setUser(data.user);
+};
 
   const signout = () => {
     setToken(null);

@@ -3,4 +3,10 @@ uvicorn
 python-multipart
 pydantic
 reportlab
-pydantic
+sqlalchemy
+psycopg2-binary
+python-jose
+bcrypt==4.1.2 
+passlib==1.7.4
+python-dotenv
+email-validator==2.3.0

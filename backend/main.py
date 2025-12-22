@@ -1,7 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 from datetime import datetime
 import os
 import uuid
@@ -10,6 +10,11 @@ from docx import Document
 from pptx import Presentation
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
+from sqlalchemy.orm import Session
+from database import get_db_connection
+from auth import hash_password, verify_password, create_access_token
+
+
 
 app = FastAPI()
 
@@ -24,6 +29,13 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 REPORT_DIR = os.path.join(BASE_DIR, "reports")
 os.makedirs(REPORT_DIR, exist_ok=True)
 
+# def get_db():
+#     db = SessionLocal()
+#     try:
+#         yield db
+#     finally:
+#         db.close()
+
 # -----------------------------
 # REQUEST MODEL
 # -----------------------------
@@ -31,6 +43,22 @@ class ReportRequest(BaseModel):
     companyName: str
     reportType: str
     insights: list[str]
+
+
+class LoginRequest(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class UserResponse(BaseModel):
+    id: int
+    name: str
+    email: EmailStr
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str
+    user: UserResponse
 
 
 # -----------------------------
@@ -169,3 +197,82 @@ def download_report(format: str, data: ReportRequest):
         }
     )
 
+
+class SignupRequest(BaseModel):
+    name: str
+    email: str
+    password: str
+    
+
+@app.post("/auth/signup", response_model=TokenResponse)
+def signup(data: SignupRequest):
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+    print("Signup data:", data)
+    name_parts = data.name.strip().split(" ", 1)
+    first_name = name_parts[0]
+    last_name = name_parts[1] if len(name_parts) > 1 else ""
+    email = data.email
+    password = hash_password(data.password)
+    print(first_name, last_name, email, password)
+    try:
+        cur.execute(
+            """
+            INSERT INTO public.users (first_name, last_name, email, password)
+            VALUES (%s, %s, %s, %s)
+            RETURNING id, first_name, last_name, email
+            """,
+            (first_name, last_name, email, password)
+        )
+
+        user = cur.fetchone()
+        print(user)
+        conn.commit()
+
+        if not user:
+            raise HTTPException(status_code=500, detail="User creation failed")
+
+        # ✅ JWT TOKEN
+        token = create_access_token({
+            "sub": str(user[0]),
+            "email": user[3]
+        })
+        print("Generated token:", token)
+
+        return {
+            "access_token": token,
+            "token_type": "bearer",
+            "user": {
+                "id": user[0],
+                "name": f"{user[1]} {user[2]}".strip(),
+                "email": user[3]
+            }
+        }
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+
+    finally:
+        cur.close()
+        conn.close()
+
+
+# @app.post("/auth/login", response_model=TokenResponse)
+# def login(data: LoginRequest, db: Session = Depends(get_db)):
+#     print(data)
+
+
+    # user = db.query(User).filter(User.email == data.email).first()
+    # print(user)
+    # print(data.email, data.password)
+    # if not user or not verify_password(data.password, user.password_hash):
+    #     raise HTTPException(status_code=401, detail="Invalid email or password")
+
+    # token = create_access_token({"sub": str(user.id)})
+
+    # return {
+    #     "access_token": token,
+    #     "token_type": "bearer",
+    #     "user": {"id": user.id, "name": user.name, "email": user.email}
+    # }
