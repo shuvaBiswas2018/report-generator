@@ -31,26 +31,44 @@ export default function MyProfile() {
 
   /* ---------------- PASSWORD SAVE ---------------- */
   const handlePasswordChange = async () => {
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      return alert("Please fill all password fields");
-    }
+  if (!currentPassword || !newPassword || !confirmPassword) {
+    return alert("Please fill all password fields");
+  }
 
-    if (newPassword !== confirmPassword) {
-      return alert("New password and confirm password do not match");
-    }
+  if (newPassword !== confirmPassword) {
+    return alert("Passwords do not match");
+  }
 
-    setSavingPassword(true);
+  setSavingPassword(true);
 
-    // 🔗 Replace with real backend API later
-    setTimeout(() => {
-      alert("Password updated successfully");
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-      setSavingPassword(false);
-      setShowPasswordBox(false);
-    }, 1200);
-  };
+  try {
+    const res = await fetch("http://localhost:8000/auth/change-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        user_id: user.id,
+        current_password: currentPassword,
+        new_password: newPassword
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.detail);
+
+    alert("Password updated successfully");
+    setShowPasswordBox(false);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    setSavingPassword(false);
+  }
+};
+
 
   return (
     <div className="pf-page">

@@ -431,6 +431,75 @@ def reset_password(data: ResetPasswordRequest):
         conn.close()
 
 
+
+class ChangePasswordRequest(BaseModel):
+    user_id: int
+    current_password: str
+    new_password: str
+
+
+@app.post("/auth/change-password")
+def change_password(data: ChangePasswordRequest):
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    try:
+        # 1️⃣ Fetch existing password
+        cur.execute(
+            "SELECT password FROM users WHERE id = %s",
+            (data.user_id,)
+        )
+        row = cur.fetchone()
+
+        if not row:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        stored_password = row[0]
+
+        # 2️⃣ Verify current password
+        if not verify_password(data.current_password, stored_password):
+            raise HTTPException(
+                status_code=400,
+                detail="Current password is incorrect"
+            )
+
+        # 3️⃣ Prevent same password reuse
+        if verify_password(data.new_password, stored_password):
+            raise HTTPException(
+                status_code=400,
+                detail="New password must be different from current password"
+            )
+
+        # 4️⃣ Update password
+        new_hashed = hash_password(data.new_password)
+
+        cur.execute(
+            """
+            UPDATE users
+            SET password = %s
+            WHERE id = %s
+            """,
+            (new_hashed, data.user_id)
+        )
+
+        conn.commit()
+
+        return {
+            "message": "Password updated successfully"
+        }
+
+    except HTTPException:
+        conn.rollback()
+        raise
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        cur.close()
+        conn.close()
+        
+
 @app.post("/api/contact")
 def contact_endpoint(request: dict):
     # Here you would normally process the contact request,
