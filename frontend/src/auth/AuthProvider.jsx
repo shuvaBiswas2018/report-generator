@@ -64,11 +64,22 @@ export function AuthProvider({ children }) {
     setUser(data.user);
   };
 
+  const signinWithToken = async (token) => {
+    const res = await fetch("http://localhost:8000/auth/me", {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const user = await res.json();
+    setToken(token);
+    setUser(user);
+  };
+
+
   const signout = () => {
     setToken(null);
     setUser(null);
   };
 
-  const value = { user, token, loading, signup, signin, signout };
+  const value = { user, token, loading, signup, signin, signinWithToken, signout };
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

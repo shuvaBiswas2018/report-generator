@@ -40,10 +40,14 @@ export default function Signup() {
         <div className="social-wrapper">
 
           {/* Google Long Button */}
-          <button className="google-long-btn">
+          <button
+            className="google-long-btn"
+            onClick={() => window.location.href = "http://localhost:8000/auth/google/login"}
+          >
             <img src="/icons/google.png" className="google-icon" alt="Google" />
             Continue with Google
           </button>
+
 
           {/* Social Icons Row */}
           <div className="social-circle-row">

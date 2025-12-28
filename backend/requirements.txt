@@ -12,3 +12,6 @@ python-dotenv
 email-validator==2.3.0
 serpapi
 requests
+authlib
+httpx
+itsdangerous

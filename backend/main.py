@@ -1,8 +1,11 @@
-from fastapi import FastAPI, Depends, HTTPException, status, APIRouter
+from fastapi import FastAPI, Depends, HTTPException, status, APIRouter, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from starlette.middleware.sessions import SessionMiddleware
+from fastapi.responses import FileResponse, RedirectResponse
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
+
+
 import os
 import uuid
 
@@ -16,6 +19,7 @@ from auth import hash_password, verify_password, create_access_token
 from serp_agent import search_feature
 from password_token_generator import generate_reset_token, reset_token_expiry
 from email_utils import send_reset_email
+from auth_utils import get_current_user
 
 
 
@@ -30,6 +34,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# Session middleware (REQUIRED for Google OAuth)
+app.add_middleware(
+    SessionMiddleware,
+    secret_key="SUPER_SECRET_RANDOM_STRING",
+    same_site="lax"
+)
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 REPORT_DIR = os.path.join(BASE_DIR, "reports")
@@ -498,7 +511,7 @@ def change_password(data: ChangePasswordRequest):
     finally:
         cur.close()
         conn.close()
-        
+
 
 @app.post("/api/contact")
 def contact_endpoint(request: dict):
@@ -564,3 +577,91 @@ def explain_feature(req: FeatureExplainRequest):
         "overview": f"AI-curated insights about {req.feature}",
         "sources": results
     }
+
+from auth_google import oauth
+
+@app.get("/auth/google/login")
+async def google_login(request: Request):
+    redirect_uri = "http://localhost:8000/auth/google/callback"
+    return await oauth.google.authorize_redirect(request, redirect_uri)
+
+
+@app.get("/auth/google/callback")
+async def google_callback(request: Request):
+    token = await oauth.google.authorize_access_token(request)
+    user_info = token.get("userinfo")
+
+    email = user_info["email"]
+    name = user_info["name"]
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # Check if user exists
+    cur.execute("SELECT id, first_name, last_name, email FROM users WHERE email = %s", (email,))
+    user = cur.fetchone()
+
+    if not user:
+        first_name = name.split(" ")[0]
+        last_name = " ".join(name.split(" ")[1:]) if len(name.split(" ")) > 1 else ""
+
+        cur.execute(
+            """
+            INSERT INTO users (first_name, last_name, email, password, auth_provider)
+            VALUES (%s, %s, %s, %s, %s)
+            RETURNING id
+            """,
+            (first_name, last_name, email, "", "google")
+        )
+        user_id = cur.fetchone()[0]
+        conn.commit()
+    else:
+        user_id = user[0]
+
+    cur.close()
+    conn.close()
+
+    jwt_token = create_access_token({
+        "sub": str(user_id),
+        "email": email
+    })
+    
+    # Redirect back to frontend
+    return RedirectResponse(
+        url=f"http://localhost:3001/oauth-success?token={jwt_token}"
+    )
+
+
+@app.get("/auth/me")
+def get_me(user=Depends(get_current_user)):
+    print(f"Current user: {user}")
+    user_id, name, email = user
+    return user
+
+
+# @app.get("/auth/google/callback")
+# async def google_callback(request: Request):
+#     token = await oauth.google.authorize_access_token(request)
+
+#     user_info = token.get("userinfo")
+#     if not user_info:
+#         raise HTTPException(status_code=400, detail="Google login failed")
+
+#     email = user_info["email"]
+#     name = user_info["name"]
+
+#     # 🔹 create / fetch user from DB here
+
+#     jwt_token = create_access_token({
+#         "sub": email,
+#         "name": name
+#     })
+
+#     return {
+#         "access_token": jwt_token,
+#         "token_type": "bearer",
+#         "user": {
+#             "email": email,
+#             "name": name
+#         }
+#     }
