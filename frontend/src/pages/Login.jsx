@@ -43,6 +43,46 @@ export default function Login() {
 
                 <h2 className="pf-login-title">Welcome Back 👋</h2>
                 <p className="pf-login-sub">Sign in to access your analyses and datasets.</p>
+                {/* SOCIAL LOGIN SECTION */}
+                <div className="social-wrapper">
+
+                    {/* Google Long Button */}
+                    <button
+                        className="google-long-btn"
+                        onClick={() => window.location.href = "http://localhost:8000/auth/google/login"}
+                    >
+                        <img src="/icons/google.png" className="google-icon" alt="Google" />
+                        Continue with Google
+                    </button>
+
+
+                    {/* Social Icons Row */}
+                    <div className="social-circle-row">
+
+                        <button className="circle-btn">
+                            <img src="/icons/facebook.png" alt="facebook" />
+                        </button>
+
+                        <button className="circle-btn">
+                            <img src="/icons/linkedin.png" alt="linkedin" />
+                        </button>
+
+                        <button className="circle-btn">
+                            <img src="/icons/github.png" alt="github" />
+                        </button>
+
+                        <button className="circle-btn">
+                            <img src="/icons/microsoft.png" alt="microsoft" />
+                        </button>
+
+                    </div>
+                </div>
+
+                {/* OR DIVIDER */}
+                <div className="divider">
+                    <span>OR</span>
+                </div>
+
 
                 {pendingReportKey && (
                     <div className="pf-login-warning">

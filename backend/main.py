@@ -637,31 +637,3 @@ def get_me(user=Depends(get_current_user)):
     print(f"Current user: {user}")
     user_id, name, email = user
     return user
-
-
-# @app.get("/auth/google/callback")
-# async def google_callback(request: Request):
-#     token = await oauth.google.authorize_access_token(request)
-
-#     user_info = token.get("userinfo")
-#     if not user_info:
-#         raise HTTPException(status_code=400, detail="Google login failed")
-
-#     email = user_info["email"]
-#     name = user_info["name"]
-
-#     # 🔹 create / fetch user from DB here
-
-#     jwt_token = create_access_token({
-#         "sub": email,
-#         "name": name
-#     })
-
-#     return {
-#         "access_token": jwt_token,
-#         "token_type": "bearer",
-#         "user": {
-#             "email": email,
-#             "name": name
-#         }
-#     }

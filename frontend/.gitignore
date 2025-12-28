@@ -1,0 +1,8 @@
+node
+node_modules
+/node_modules
+/dist
+/build
+/.next
+/.nuxt
+.DS_Store
