@@ -4,6 +4,7 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 import Login from "../pages/Login";
 import ForgotPassword from "../pages/ForgotPassword";
+import ResetPassword from "../pages/resetPassword";
 import Signup from "../pages/Signup"; // if you have this
 
 export default function AuthRoutes() {
@@ -13,6 +14,7 @@ export default function AuthRoutes() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/signup" element={<Signup />} />
         </Routes>
       </CSSTransition>

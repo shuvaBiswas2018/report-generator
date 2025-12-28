@@ -1,5 +1,5 @@
 // Home.jsx
-import React from 'react';
+import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
 
@@ -10,7 +10,12 @@ export default function Home() {
 
 
   const [activeIndex, setActiveIndex] = React.useState(0);
+  // const [learnMoreData, setLearnMoreData] = React.useState(null);
+  const [aiResult, setAiResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
+  
   const featureData = [
     {
       tag: "Business performance",
@@ -43,6 +48,30 @@ export default function Home() {
       desc: "Monitor CO₂ footprint, track power quality, and understand how operational decisions influence sustainability targets."
     }
   ];
+
+  /* ---------------- AI LEARN MORE ---------------- */
+  const handleLearnMore = async () => {
+    setLoading(true);
+    setError(null);
+    setAiResult(null);
+
+    try {
+      const res = await fetch("http://localhost:8000/ai/feature-explain", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ feature: featureData[activeIndex].tag })
+      });
+
+      if (!res.ok) throw new Error("Failed to fetch AI insights");
+
+      const data = await res.json();
+      setAiResult(data);
+    } catch (err) {
+      setError("Unable to load AI insights. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
 
   return (
@@ -221,7 +250,41 @@ export default function Home() {
               <h3 className="cap-right-title">{featureData[activeIndex].title}</h3>
               <p className="cap-right-desc">{featureData[activeIndex].desc}</p>
 
-              <button className="cap-btn">Learn more</button>
+              <button className="cap-btn" onClick={handleLearnMore}>
+                Learn more
+              </button>
+
+              {/* LOADING */}
+              {loading && <p className="pf-muted">AI is researching…</p>}
+
+              {/* ERROR */}
+              {error && <p style={{ color: "#b91c1c" }}>{error}</p>}
+
+              {/* AI RESULT */}
+              {aiResult && (
+                <div className="pf-card ai-result">
+                  <h4>AI-curated insights</h4>
+
+                  <ul>
+                    {aiResult.sources.map((src, i) => (
+                      <li key={i}>
+                        <strong>{src.title}</strong>
+                        <p>{src.snippet}</p>
+                        <a href={src.link} target="_blank" rel="noreferrer">
+                          Read source →
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <button
+                    className="pf-ghost"
+                    onClick={() => setAiResult(null)}
+                  >
+                    Close
+                  </button>
+                </div>
+              )}
             </div>
 
           </div>

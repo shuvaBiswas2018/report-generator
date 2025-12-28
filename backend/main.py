@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, EmailStr
@@ -13,10 +13,16 @@ from reportlab.pdfgen import canvas
 from sqlalchemy.orm import Session
 from database import get_db_connection
 from auth import hash_password, verify_password, create_access_token
+from serp_agent import search_feature
+from password_token_generator import generate_reset_token, reset_token_expiry
+from email_utils import send_reset_email
+
 
 
 
 app = FastAPI()
+
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -60,6 +66,15 @@ class TokenResponse(BaseModel):
     token_type: str
     user: UserResponse
 
+
+class FeatureExplainRequest(BaseModel):
+    feature: str
+
+
+class SignupRequest(BaseModel):
+    name: str
+    email: str
+    password: str
 
 # -----------------------------
 # PDF GENERATOR (SAFE)
@@ -196,12 +211,6 @@ def download_report(format: str, data: ReportRequest):
             "Content-Disposition": f'attachment; filename="{filename}"'
         }
     )
-
-
-class SignupRequest(BaseModel):
-    name: str
-    email: str
-    password: str
     
 
 @app.post("/auth/signup", response_model=TokenResponse)
@@ -308,6 +317,120 @@ def login(data: LoginRequest):
         conn.close()
 
 
+
+# from pydantic import BaseModel, EmailStr
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+@app.post("/auth/forgot-password")
+def forgot_password(data: ForgotPasswordRequest):
+    print(f"Password reset requested for email: {data.email}")
+    conn = get_db_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            "SELECT id FROM public.users WHERE email = %s",
+            (data.email,)
+        )
+        user = cur.fetchone()
+        # Always return success (security)
+        if not user:
+            raise HTTPException(
+                status_code=404,
+                detail="Your email doesn't exist in our system. Please register."
+            )
+
+        token = generate_reset_token()
+        expires = reset_token_expiry()
+        cur.execute(
+            """
+            INSERT INTO public.password_reset_tokens
+            (user_id, token_hash, expires_at, used)
+            VALUES (%s, %s, %s, FALSE) RETURNING id
+            """,
+            (user[0], token, expires)
+        )
+        
+        conn.commit()
+
+        reset_link = f"http://localhost:3001/reset-password?token={token}"
+        print(f"Reset link: {reset_link}")
+        send_reset_email(data.email, reset_link)
+
+        return {"message": "A password reset link has been sent to this email."}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        cur.close()
+        conn.close()
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    password: str
+
+
+
+@app.post("/auth/reset-password")
+def reset_password(data: ResetPasswordRequest):
+    print(f"Resetting password for token: {data.token}")
+    conn = get_db_connection()
+    cur = conn.cursor()
+    try:
+        cur.execute(
+            """
+            SELECT id, user_id, expires_at
+            FROM password_reset_tokens
+            WHERE token_hash = %s
+            """,
+            (data.token,)
+        )
+
+        row = cur.fetchone()
+
+        if not row:
+            raise HTTPException(status_code=400, detail="Invalid or expired token")
+
+        id, user_id, expires_at = row
+
+        print(f"user_id: {user_id}, expires_at: {expires_at}, now: {datetime.utcnow()}")
+
+        if expires_at < datetime.utcnow():
+            raise HTTPException(status_code=400, detail="Reset token expired")
+        
+        hashed = hash_password(data.password)
+
+        cur.execute(
+            """
+            UPDATE public.password_reset_tokens
+            SET used = TRUE
+            WHERE id = %s
+            """,
+            (id,)
+        )
+        conn.commit()
+
+        cur.execute(
+            """
+            UPDATE public.users
+            SET password = %s
+            WHERE id = %s
+            """,
+            (hashed, user_id)
+        )
+        conn.commit()
+        return {"message": "Password reset successfully"}
+    except Exception as e:
+        conn.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        cur.close()
+        conn.close()
+
+
 @app.post("/api/contact")
 def contact_endpoint(request: dict):
     # Here you would normally process the contact request,
@@ -356,3 +479,19 @@ def contact_endpoint(request: dict):
     finally:
         cur.close()
         conn.close()
+
+
+@app.post("/ai/feature-explain")
+def explain_feature(req: FeatureExplainRequest):
+    if not req.feature:
+        raise HTTPException(status_code=400, detail="Feature is required")
+
+    print(f"Explaining feature: {req.feature}")
+    results = search_feature(req.feature)
+
+    print(f"Search results: {results}")
+    return {
+        "feature": req.feature,
+        "overview": f"AI-curated insights about {req.feature}",
+        "sources": results
+    }

@@ -1,58 +1,126 @@
-// src/pages/ForgotPassword.jsx
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function ForgotPassword() {
-    const [email, setEmail] = useState("");
-    const [sent, setSent] = useState(false);
-    const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
 
-    const submit = (e) => {
-        e.preventDefault();
-        setSent(true);
+  const navigate = useNavigate();
 
-        // simulate email sent
-        setTimeout(() => {
-            alert(`Reset link sent to ${email}`);
-            navigate("/login");
-        }, 800);
-    };
+  const submit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setErrorMsg(null);
+    setSuccessMsg(null);
 
-    return (
-        <div className="pf-forgot-password-page">
+    try {
+      const res = await fetch("http://localhost:8000/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
 
-            <div className="forgot-card slide-in">
-                <h2 className="pf-login-title">Reset Password 🔐</h2>
-                <p className="pf-login-sub">
-                    Enter your email and we will send you a password reset link.
-                </p>
+      const data = await res.json();
 
-                {!sent ? (
-                    <form onSubmit={submit} className="pf-login-form">
-                        <label className="pf-label">Email address</label>
-                        <input
-                            type="email"
-                            className="pf-input animated-input"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
+      if (!res.ok) {
+        throw new Error(data.detail || "Failed to send reset link");
+      }
 
-                        <button className="btn-primary" style={{ marginTop: 14 }}>
-                            Send Reset Link
-                        </button>
+      // Always show same success message (security)
+      setSuccessMsg(
+        "A password reset link has been sent to this email."
+      );
 
-                        <div className="back-login" onClick={() => navigate("/login")}>
-                            ← Back to Login
-                        </div>
-                    </form>
-                ) : (
-                    <div style={{ marginTop: 20, fontSize: 16 }}>
-                        Sending reset link...
-                    </div>
-                )}
+      // Redirect to login after short delay
+      setTimeout(() => {
+        navigate("/login");
+      }, 2500);
+
+    } catch (err) {
+      setErrorMsg(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="pf-forgot-password-page">
+
+      <div className="forgot-card slide-in">
+        <h2 className="pf-login-title">Reset Password 🔐</h2>
+
+        <p className="pf-login-sub">
+          Enter your email and we’ll send you a password reset link.
+        </p>
+
+        {/* SUCCESS MESSAGE */}
+        {successMsg && (
+          <div
+            style={{
+              background: "#ecfdf5",
+              color: "#065f46",
+              padding: 12,
+              borderRadius: 8,
+              marginBottom: 14,
+              fontSize: 14,
+            }}
+          >
+            {successMsg}
+          </div>
+        )}
+
+        {/* ERROR MESSAGE */}
+        {errorMsg && (
+          <div
+            style={{
+              background: "#fee2e2",
+              color: "#7f1d1d",
+              padding: 12,
+              borderRadius: 8,
+              marginBottom: 14,
+              fontSize: 14,
+            }}
+          >
+            {errorMsg}
+          </div>
+        )}
+
+        {!successMsg && (
+          <form onSubmit={submit} className="pf-login-form">
+
+            <label className="pf-label">Email address</label>
+            <input
+              type="email"
+              className="pf-input animated-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              required
+              disabled={loading}
+            />
+
+            <button
+              className="btn-primary"
+              style={{ marginTop: 14 }}
+              disabled={loading}
+            >
+              {loading ? "Sending..." : "Send Reset Link"}
+            </button>
+
+            <div
+              className="back-login"
+              onClick={() => navigate("/login")}
+              style={{ marginTop: 16 }}
+            >
+              ← Back to Login
             </div>
 
-        </div>
-    );
+          </form>
+        )}
+      </div>
+
+    </div>
+  );
 }
