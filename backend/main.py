@@ -5,7 +5,6 @@ from fastapi.responses import FileResponse, RedirectResponse
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 
-
 import os
 import uuid
 
@@ -628,7 +627,7 @@ async def google_callback(request: Request):
     
     # Redirect back to frontend
     return RedirectResponse(
-        url=f"http://localhost:3001/oauth-success?token={jwt_token}"
+        url=f"http://localhost:3000/oauth-success?token={jwt_token}"
     )
 
 

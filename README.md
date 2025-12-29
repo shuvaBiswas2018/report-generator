@@ -42,6 +42,8 @@ This repository contains both the backend and frontend for the Report Generator 
 
 ## Getting started
 
+Detailed setup instructions are available in `backend/README.md` and `frontend/README.md`.
+
 Follow the steps below to run the project locally.
 
 ### Backend

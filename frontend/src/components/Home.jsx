@@ -226,6 +226,7 @@ export default function Home() {
                 "Business performance",
                 "Workforce & attendance",
                 "Financial insights",
+                "Energy & consumption",
                 "Asset & equipment health",
                 "Sustainability metrics"
               ].map((item, idx) => (
