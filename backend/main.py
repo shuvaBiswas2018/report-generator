@@ -4,6 +4,8 @@ from starlette.middleware.sessions import SessionMiddleware
 from fastapi.responses import FileResponse, RedirectResponse
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
+from auth_google import google_oauth
+# from auth_linkedin import linkedin_oauth
 
 import os
 import uuid
@@ -19,8 +21,8 @@ from serp_agent import search_feature
 from password_token_generator import generate_reset_token, reset_token_expiry
 from email_utils import send_reset_email
 from auth_utils import get_current_user
-
-
+from auth_linkedin import router as linkedin_router
+    
 
 
 app = FastAPI()
@@ -29,6 +31,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
+    allow_credentials=True,
     allow_origins=["*"],
     allow_methods=["*"],
     allow_headers=["*"],
@@ -42,7 +45,7 @@ app.add_middleware(
     same_site="lax"
 )
 
-
+app.include_router(linkedin_router)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 REPORT_DIR = os.path.join(BASE_DIR, "reports")
 os.makedirs(REPORT_DIR, exist_ok=True)
@@ -577,17 +580,16 @@ def explain_feature(req: FeatureExplainRequest):
         "sources": results
     }
 
-from auth_google import oauth
 
 @app.get("/auth/google/login")
 async def google_login(request: Request):
     redirect_uri = "http://localhost:8000/auth/google/callback"
-    return await oauth.google.authorize_redirect(request, redirect_uri)
+    return await google_oauth.google.authorize_redirect(request, redirect_uri)
 
 
 @app.get("/auth/google/callback")
 async def google_callback(request: Request):
-    token = await oauth.google.authorize_access_token(request)
+    token = await google_oauth.google.authorize_access_token(request)
     user_info = token.get("userinfo")
 
     email = user_info["email"]
@@ -636,3 +638,4 @@ def get_me(user=Depends(get_current_user)):
     print(f"Current user: {user}")
     user_id, name, email = user
     return user
+

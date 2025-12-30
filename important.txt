@@ -2,3 +2,7 @@ https://console.cloud.google.com/auth/clients/create?authuser=1&project=insightf
 
 
 https://console.neon.tech/app/projects/noisy-violet-76756100/branches/br-hidden-cherry-abeybqjo/tables?database=neondb
+
+
+
+https://www.linkedin.com/developers/apps/229145623/auth

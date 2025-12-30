@@ -1,9 +1,11 @@
 from authlib.integrations.starlette_client import OAuth
 import os
+from dotenv import load_dotenv
+load_dotenv() 
 
-oauth = OAuth()
+google_oauth = OAuth()
 
-oauth.register(
+google_oauth.register(
     name="google",
     client_id=os.getenv("GOOGLE_CLIENT_ID"),
     client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),

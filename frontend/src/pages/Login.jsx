@@ -59,11 +59,13 @@ export default function Login() {
                     {/* Social Icons Row */}
                     <div className="social-circle-row">
 
-                        <button className="circle-btn">
+                        {/* <button className="circle-btn">
                             <img src="/icons/facebook.png" alt="facebook" />
-                        </button>
+                        </button> */}
 
-                        <button className="circle-btn">
+                        <button className="circle-btn"
+                        onClick={() => window.location.href = "http://localhost:8000/auth/linkedin/login"}>
+                            
                             <img src="/icons/linkedin.png" alt="linkedin" />
                         </button>
 
