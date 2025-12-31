@@ -6,3 +6,5 @@ https://console.neon.tech/app/projects/noisy-violet-76756100/branches/br-hidden-
 
 
 https://www.linkedin.com/developers/apps/229145623/auth
+
+https://docs.github.com/en/apps/using-github-apps/authorizing-github-apps

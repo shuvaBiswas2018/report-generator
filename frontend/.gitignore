@@ -1,8 +1,40 @@
-node
-node_modules
-/node_modules
-/dist
-/build
-/.next
-/.nuxt
+# Frontend (.gitignore) for Create React App
+
+# Node modules
+/node_modules/
+
+# Build output
+/build/
+
+# Local environment files (keep .env.example in repo if you have one)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Log files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Test / coverage
+/coverage/
+
+# Cache
+.cache/
+.parcel-cache/
+
+# Editor directories and OS files
+.vscode/
+.idea/
+*.sublime-workspace
 .DS_Store
+Thumbs.db
+
+# Misc
+dist/
+.storybook/
+storybook-static/

@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 export default function EnergyAnalysisDetails() {
     const [expanded, setExpanded] = useState(false);
     const navigate = useNavigate();
-const [country, setCountry] = useState("");
-const [currencySymbol, setCurrencySymbol] = useState("₹");
+    const [country, setCountry] = useState("");
+    const [currencySymbol, setCurrencySymbol] = useState("₹");
 
     // ------------------------------------------
     // HERO SECTION SLIDESHOW IMAGES
@@ -116,7 +116,7 @@ const [currencySymbol, setCurrencySymbol] = useState("₹");
                     </h1>
 
 
-                    <p className="pf-muted" style={{ maxWidth: 600, fontSize: 16 }}>
+                    <p className="pf-muted" style={{ marginTop: 16, maxWidth: 600, lineHeight: 1.6 }}>
                         Energy analysis helps organizations understand consumption patterns,
                         detect inefficiencies, and reduce operational costs while improving
                         sustainability and equipment reliability.

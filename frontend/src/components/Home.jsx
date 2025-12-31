@@ -1,7 +1,8 @@
 // Home.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
+
 
 export default function Home() {
   const navigate = useNavigate();
@@ -14,8 +15,17 @@ export default function Home() {
   const [aiResult, setAiResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [insightCache, setInsightCache] = useState({});
+
   const API_URL = process.env.REACT_APP_API_URL;
-  
+
+  useEffect(() => {
+  // When user switches feature, hide current AI result
+  setAiResult(null);
+  setError(null);
+  setLoading(false);
+}, [activeIndex]);
+
   const featureData = [
     {
       tag: "Business performance",
@@ -51,6 +61,15 @@ export default function Home() {
 
   /* ---------------- AI LEARN MORE ---------------- */
   const handleLearnMore = async () => {
+    const featureKey = featureData[activeIndex].tag;
+
+    // 🔹 1. Serve from cache (no backend call)
+    if (insightCache[featureKey]) {
+      setAiResult(insightCache[featureKey]);
+      return;
+    }
+
+    // 🔹 2. Otherwise fetch from backend
     setLoading(true);
     setError(null);
     setAiResult(null);
@@ -59,12 +78,19 @@ export default function Home() {
       const res = await fetch(`${API_URL}/ai/feature-explain`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ feature: featureData[activeIndex].tag })
+        body: JSON.stringify({ feature: featureKey })
       });
 
       if (!res.ok) throw new Error("Failed to fetch AI insights");
 
       const data = await res.json();
+
+      // 🔹 Save to cache
+      setInsightCache(prev => ({
+        ...prev,
+        [featureKey]: data
+      }));
+
       setAiResult(data);
     } catch (err) {
       setError("Unable to load AI insights. Please try again.");
@@ -251,12 +277,34 @@ export default function Home() {
               <h3 className="cap-right-title">{featureData[activeIndex].title}</h3>
               <p className="cap-right-desc">{featureData[activeIndex].desc}</p>
 
-              <button className="cap-btn" onClick={handleLearnMore}>
-                Learn more
-              </button>
+              {/* SHOW BUTTON ONLY WHEN NO INSIGHTS */}
+              {!aiResult && (
+                <button
+                  className="cap-btn"
+                  onClick={handleLearnMore}
+                  disabled={loading}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    opacity: loading ? 0.7 : 1,
+                    cursor: loading ? "not-allowed" : "pointer"
+                  }}
+                >
+                  {loading ? (
+                    <>
+                      <div className="ai-spinner"></div>
+                      Loading…
+                    </>
+                  ) : (
+                    "Learn more"
+                  )}
+                </button>
+              )}
+
 
               {/* LOADING */}
-              {loading && <p className="pf-muted">AI is researching…</p>}
+              {/* {loading && <p className="pf-muted">AI is researching…</p>} */}
 
               {/* ERROR */}
               {error && <p style={{ color: "#b91c1c" }}>{error}</p>}
@@ -264,7 +312,7 @@ export default function Home() {
               {/* AI RESULT */}
               {aiResult && (
                 <div className="pf-card ai-result">
-                  <h4>AI-curated insights</h4>
+                  <h4>AI-curated Details</h4>
 
                   <ul>
                     {aiResult.sources.map((src, i) => (
@@ -284,6 +332,7 @@ export default function Home() {
                   >
                     Close
                   </button>
+
                 </div>
               )}
             </div>

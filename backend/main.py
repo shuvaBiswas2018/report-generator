@@ -400,7 +400,6 @@ class ResetPasswordRequest(BaseModel):
 
 @app.post("/auth/reset-password")
 def reset_password(data: ResetPasswordRequest):
-    print(f"Resetting password for token: {data.token}")
     conn = get_db_connection()
     cur = conn.cursor()
     try:

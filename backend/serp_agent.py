@@ -5,7 +5,6 @@ from config import SERPAPI_API_KEY as SERPAPI_KEY
 def search_feature(feature_name: str):
     
     query = f"{feature_name} analytics business benefits use cases"
-    print(f"Searching for: {query}")
 
     params = {
         "engine": "google_ai_mode",
@@ -14,10 +13,8 @@ def search_feature(feature_name: str):
         "num": 5
     }
 
-    print(params)
 
     response = requests.get("https://www.searchapi.io/api/v1/search", params=params, timeout=15)
-    print(f"Response Status Code: {response.text}")
     data = response.json()
 
     results = []

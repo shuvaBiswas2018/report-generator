@@ -109,7 +109,7 @@ export default function Contact() {
 
                                 <div style={{ marginTop: 12 }}>
                                     <strong>Phone:</strong><br />
-                                    <a href="tel:+911234567890">+91 12 3456 7890</a>
+                                    <a href="tel:+916291469897">+91 6291 469897</a>
                                 </div>
 
                                 <div style={{ marginTop: 18, fontSize: 13, color: '#6b7280' }}>
