@@ -1,7 +1,6 @@
 import os
 import requests
-
-SERPAPI_KEY = os.getenv("SERPAPI_API_KEY")
+from config import SERPAPI_API_KEY as SERPAPI_KEY
 
 def search_feature(feature_name: str):
     

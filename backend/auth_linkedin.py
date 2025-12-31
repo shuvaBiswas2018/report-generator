@@ -6,8 +6,7 @@ from database import get_db_connection
 from auth import create_access_token
 import os
 import httpx
-from dotenv import load_dotenv
-load_dotenv()
+from config import BACKEND_URL, FRONTEND_URL, LINKEDIN_CLIENT_ID, LINKEDIN_CLIENT_SECRET
 
 router = APIRouter()
 
@@ -15,8 +14,8 @@ linkedin_oauth = OAuth()
 
 linkedin_oauth.register(
     name="linkedin",
-    client_id=os.getenv("LINKEDIN_CLIENT_ID"),
-    client_secret=os.getenv("LINKEDIN_CLIENT_SECRET"),
+    client_id=LINKEDIN_CLIENT_ID,
+    client_secret=LINKEDIN_CLIENT_SECRET,
     authorize_url="https://www.linkedin.com/oauth/v2/authorization",
     access_token_url="https://www.linkedin.com/oauth/v2/accessToken",
     client_kwargs={
@@ -27,7 +26,7 @@ linkedin_oauth.register(
 
 @router.get("/auth/linkedin/login")
 async def linkedin_login(request: Request):
-    redirect_uri = "http://localhost:8000/auth/linkedin/callback"
+    redirect_uri = f"{BACKEND_URL}/auth/linkedin/callback"
     return await linkedin_oauth.linkedin.authorize_redirect(request, redirect_uri)
 
 
@@ -38,7 +37,7 @@ async def linkedin_callback(code:str = None, request: Request = None):
         data={
             "grant_type": "authorization_code",
             "code": code,
-            "redirect_uri": "http://localhost:8000/auth/linkedin/callback",
+            "redirect_uri": f"{BACKEND_URL}/auth/linkedin/callback",
             "client_id": "86wrj1qg8bjwkn",
             "client_secret": "WPL_AP1.Y2IDurvLiMfRxpLs.W+HXQA==",
         },
@@ -100,5 +99,5 @@ async def linkedin_callback(code:str = None, request: Request = None):
         "email": email
     })
 
-    frontend_redirect = f"http://localhost:3000/oauth-success?token={jwt_token}"
+    frontend_redirect = f"{FRONTEND_URL}/oauth-success?token={jwt_token}"
     return RedirectResponse(frontend_redirect)

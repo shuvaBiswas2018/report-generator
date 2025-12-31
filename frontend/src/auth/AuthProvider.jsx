@@ -4,6 +4,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 // Local storage keys
 const AUTH_KEY = 'insightflow_auth';
 const USERS_KEY = 'insightflow_users';
+const API_URL = process.env.REACT_APP_API_URL;
 
 const AuthContext = createContext(null);
 
@@ -34,7 +35,7 @@ export function AuthProvider({ children }) {
   }, [token, user]);
 
   const signup = async ({ name, email, password }) => {
-    const res = await fetch("http://localhost:8000/auth/signup", {
+    const res = await fetch(`${API_URL}/auth/signup`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, password })
@@ -48,7 +49,7 @@ export function AuthProvider({ children }) {
   };
 
   const signin = async ({ email, password }) => {
-    const res = await fetch("http://localhost:8000/auth/login", {
+    const res = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password })
@@ -65,7 +66,7 @@ export function AuthProvider({ children }) {
   };
 
   const signinWithToken = async (token) => {
-    const res = await fetch("http://localhost:8000/auth/me", {
+    const res = await fetch(`${API_URL}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 

@@ -6,15 +6,14 @@ from datetime import datetime
 
 from database import get_db_connection
 from auth import create_access_token
-from dotenv import load_dotenv
-load_dotenv()
+from config import BACKEND_URL, FRONTEND_URL, GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET
 
 router = APIRouter()
 
-GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
-GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
-REDIRECT_URI = "http://localhost:8000/auth/github/callback"
-FRONTEND_SUCCESS = "http://localhost:3000/oauth-success"
+GITHUB_CLIENT_ID = GITHUB_CLIENT_ID
+GITHUB_CLIENT_SECRET = GITHUB_CLIENT_SECRET
+REDIRECT_URI = f"{BACKEND_URL}/auth/github/callback"
+FRONTEND_SUCCESS = f"{FRONTEND_URL}/oauth-success"
 
 
 # -------------------------

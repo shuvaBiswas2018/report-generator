@@ -2,10 +2,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-SMTP_HOST = "smtp.gmail.com"
-SMTP_PORT = 587
-SMTP_USER = "shuvabiswas.dev@gmail.com"
-SMTP_PASS = "avha tglm ugfa vwbr"
+from config import SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS
 
 def send_reset_email(to_email: str, reset_link: str):
     msg = MIMEMultipart()

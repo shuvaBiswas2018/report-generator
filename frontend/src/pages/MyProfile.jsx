@@ -4,7 +4,7 @@ import { useAuth } from "../auth/AuthProvider";
 
 export default function MyProfile() {
   const { user } = useAuth();
-
+  const API_URL = process.env.REACT_APP_API_URL;
   /* ---------------- PASSWORD UI STATE ---------------- */
   const [showPasswordBox, setShowPasswordBox] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
@@ -42,7 +42,7 @@ export default function MyProfile() {
   setSavingPassword(true);
 
   try {
-    const res = await fetch("http://localhost:8000/auth/change-password", {
+    const res = await fetch(`${API_URL}/auth/change-password`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

@@ -15,7 +15,7 @@ export default function Contact() {
     const [success, setSuccess] = useState(null);
     const [serverError, setServerError] = useState(null);
     const [infoType, setInfoType] = useState('');
-
+    const API_URL = process.env.REACT_APP_API_URL;
 
     useEffect(() => {
         if (user) {
@@ -42,7 +42,7 @@ export default function Contact() {
 
         setBusy(true);
         try {
-            const res = await fetch('http://localhost:8000/api/contact', {
+            const res = await fetch(`${API_URL}/api/contact`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: user ? user.id : null, name: name.trim(), email: email.trim(), message: message.trim(), infoType }),

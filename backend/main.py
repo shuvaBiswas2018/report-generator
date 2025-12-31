@@ -23,7 +23,7 @@ from auth_utils import get_current_user
 from auth_linkedin import router as linkedin_router
 from auth_github import router as github_router
 from auth_google import google_oauth
-from config import BACKEND_URL, FRONTEND_URL
+from config import *
 
     
 

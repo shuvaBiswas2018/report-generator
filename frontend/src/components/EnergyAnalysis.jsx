@@ -55,7 +55,7 @@ export default function EnergyAnalysis() {
   const [reportType, setReportType] = useState("");
   const [showReport, setShowReport] = useState(false);
   const [showDownloadMenu, setShowDownloadMenu] = useState(false);
-
+  const API_URL = process.env.REACT_APP_API_URL;
   /* -------------------- INSIGHTS -------------------- */
   const [insights, setInsights] = useState(
     GRAPH_TITLES.map(
@@ -92,7 +92,7 @@ export default function EnergyAnalysis() {
   };
 
   const downloadReport = async (format) => {
-    const res = await fetch(`http://localhost:8000/download-report/${format}`, {
+    const res = await fetch(`${API_URL}/download-report/${format}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

@@ -15,7 +15,7 @@ export default function AnalysisPage() {
   const [reportReady, setReportReady] = useState(null);
   const fileRef = useRef();
   const isLoggedIn = !!auth.user;
-
+  const API_URL = process.env.REACT_APP_API_URL;
   useEffect(() => {
     const pendingKey = location.state?.pendingReportKey;
     if (pendingKey) {
@@ -43,7 +43,7 @@ export default function AnalysisPage() {
       fd.append('analysisType', analysisType);
 
       const headers = auth.token ? { Authorization: `Bearer ${auth.token}` } : {};
-      const url = 'http://localhost:5000/api/upload-and-generate';
+      const url = `${API_URL}/api/upload-and-generate`;
 
       // Try actual upload; if fails, fallback to mock report
       const res = await axios.post(url, fd, { headers, timeout: 120000 });

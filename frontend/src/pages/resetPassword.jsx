@@ -12,7 +12,7 @@ export default function ResetPassword() {
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-
+  const API_URL = process.env.REACT_APP_API_URL;
   useEffect(() => {
     if (!token) {
       setError("Invalid or missing reset token.");
@@ -32,7 +32,7 @@ export default function ResetPassword() {
     }
 
     try {
-      const res = await fetch("http://localhost:8000/auth/reset-password", {
+      const res = await fetch(`${API_URL}/auth/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, password }),

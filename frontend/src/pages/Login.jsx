@@ -14,7 +14,9 @@ export default function Login() {
     const location = useLocation();
     const from = location.state?.from?.pathname || '/';
     const pendingReportKey = location.state?.pendingReportKey;
+    const API_URL = process.env.REACT_APP_API_URL;
 
+    console.log(`API_rl : ${API_URL}/auth/google/login`)
     const submit = async (e) => {
         e.preventDefault();
         setError('');
@@ -49,7 +51,7 @@ export default function Login() {
                     {/* Google Long Button */}
                     <button
                         className="google-long-btn"
-                        onClick={() => window.location.href = "http://localhost:8000/auth/google/login"}
+                        onClick={() => window.location.href = `${API_URL}/auth/google/login`}
                     >
                         <img src="/icons/google.png" className="google-icon" alt="Google" />
                         Continue with Google
@@ -64,13 +66,13 @@ export default function Login() {
                         </button> */}
 
                         <button className="circle-btn"
-                        onClick={() => window.location.href = "http://localhost:8000/auth/linkedin/login"}>
+                        onClick={() => window.location.href = `${API_URL}/auth/linkedin/login`}>
                             
                             <img src="/icons/linkedin.png" alt="linkedin" />
                         </button>
 
                         <button className="circle-btn" 
-                        onClick={() => window.location.href = "http://localhost:8000/auth/github/login"}>
+                        onClick={() => window.location.href = `${API_URL}/auth/github/login`}>
                             <img src="/icons/github.png" alt="github" />
                         </button>
 

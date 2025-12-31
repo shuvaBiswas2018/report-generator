@@ -14,7 +14,7 @@ export default function Home() {
   const [aiResult, setAiResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const API_URL = process.env.REACT_APP_API_URL;
   
   const featureData = [
     {
@@ -56,7 +56,7 @@ export default function Home() {
     setAiResult(null);
 
     try {
-      const res = await fetch("http://localhost:8000/ai/feature-explain", {
+      const res = await fetch(`${API_URL}/ai/feature-explain`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ feature: featureData[activeIndex].tag })
