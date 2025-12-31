@@ -4,7 +4,6 @@ from starlette.middleware.sessions import SessionMiddleware
 from fastapi.responses import FileResponse, RedirectResponse
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
-from auth_google import google_oauth
 # from auth_linkedin import linkedin_oauth
 
 import os
@@ -22,6 +21,10 @@ from password_token_generator import generate_reset_token, reset_token_expiry
 from email_utils import send_reset_email
 from auth_utils import get_current_user
 from auth_linkedin import router as linkedin_router
+from auth_github import router as github_router
+from auth_google import google_oauth
+from config import BACKEND_URL, FRONTEND_URL
+
     
 
 
@@ -46,6 +49,7 @@ app.add_middleware(
 )
 
 app.include_router(linkedin_router)
+app.include_router(github_router)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 REPORT_DIR = os.path.join(BASE_DIR, "reports")
 os.makedirs(REPORT_DIR, exist_ok=True)
@@ -370,7 +374,7 @@ def forgot_password(data: ForgotPasswordRequest):
         
         conn.commit()
 
-        reset_link = f"http://localhost:3001/reset-password?token={token}"
+        reset_link = f"{FRONTEND_URL}/reset-password?token={token}"
         print(f"Reset link: {reset_link}")
         send_reset_email(data.email, reset_link)
 
@@ -583,7 +587,7 @@ def explain_feature(req: FeatureExplainRequest):
 
 @app.get("/auth/google/login")
 async def google_login(request: Request):
-    redirect_uri = "http://localhost:8000/auth/google/callback"
+    redirect_uri = f"{BACKEND_URL}/auth/google/callback"
     return await google_oauth.google.authorize_redirect(request, redirect_uri)
 
 
@@ -629,7 +633,7 @@ async def google_callback(request: Request):
     
     # Redirect back to frontend
     return RedirectResponse(
-        url=f"http://localhost:3000/oauth-success?token={jwt_token}"
+        url=f"{FRONTEND_URL}/oauth-success?token={jwt_token}"
     )
 
 

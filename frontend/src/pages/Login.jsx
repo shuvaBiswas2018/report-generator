@@ -69,7 +69,8 @@ export default function Login() {
                             <img src="/icons/linkedin.png" alt="linkedin" />
                         </button>
 
-                        <button className="circle-btn">
+                        <button className="circle-btn" 
+                        onClick={() => window.location.href = "http://localhost:8000/auth/github/login"}>
                             <img src="/icons/github.png" alt="github" />
                         </button>
 

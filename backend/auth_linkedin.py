@@ -3,7 +3,7 @@ import requests
 from fastapi import APIRouter, Request, HTTPException
 from starlette.responses import RedirectResponse
 from database import get_db_connection
-from auth import hash_password, verify_password, create_access_token
+from auth import create_access_token
 import os
 import httpx
 from dotenv import load_dotenv
@@ -15,8 +15,8 @@ linkedin_oauth = OAuth()
 
 linkedin_oauth.register(
     name="linkedin",
-    client_id="86wrj1qg8bjwkn",
-    client_secret="WPL_AP1.Y2IDurvLiMfRxpLs.W+HXQA==",
+    client_id=os.getenv("LINKEDIN_CLIENT_ID"),
+    client_secret=os.getenv("LINKEDIN_CLIENT_SECRET"),
     authorize_url="https://www.linkedin.com/oauth/v2/authorization",
     access_token_url="https://www.linkedin.com/oauth/v2/accessToken",
     client_kwargs={
