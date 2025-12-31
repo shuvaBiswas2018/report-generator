@@ -95,6 +95,13 @@ class SignupRequest(BaseModel):
     email: str
     password: str
 
+
+class ChangePasswordRequest(BaseModel):
+    user_id: int
+    current_password: str
+    new_password: str
+
+
 # -----------------------------
 # PDF GENERATOR (SAFE)
 # -----------------------------
@@ -345,7 +352,6 @@ class ForgotPasswordRequest(BaseModel):
 
 @app.post("/auth/forgot-password")
 def forgot_password(data: ForgotPasswordRequest):
-    print(f"Password reset requested for email: {data.email}")
     conn = get_db_connection()
     cur = conn.cursor()
     try:
@@ -375,7 +381,6 @@ def forgot_password(data: ForgotPasswordRequest):
         conn.commit()
 
         reset_link = f"{FRONTEND_URL}/reset-password?token={token}"
-        print(f"Reset link: {reset_link}")
         send_reset_email(data.email, reset_link)
 
         return {"message": "A password reset link has been sent to this email."}
@@ -415,7 +420,6 @@ def reset_password(data: ResetPasswordRequest):
 
         id, user_id, expires_at = row
 
-        print(f"user_id: {user_id}, expires_at: {expires_at}, now: {datetime.utcnow()}")
 
         if expires_at < datetime.utcnow():
             raise HTTPException(status_code=400, detail="Reset token expired")
@@ -448,13 +452,6 @@ def reset_password(data: ResetPasswordRequest):
     finally:
         cur.close()
         conn.close()
-
-
-
-class ChangePasswordRequest(BaseModel):
-    user_id: int
-    current_password: str
-    new_password: str
 
 
 @app.post("/auth/change-password")
@@ -574,10 +571,8 @@ def explain_feature(req: FeatureExplainRequest):
     if not req.feature:
         raise HTTPException(status_code=400, detail="Feature is required")
 
-    print(f"Explaining feature: {req.feature}")
     results = search_feature(req.feature)
 
-    print(f"Search results: {results}")
     return {
         "feature": req.feature,
         "overview": f"AI-curated insights about {req.feature}",
@@ -639,7 +634,6 @@ async def google_callback(request: Request):
 
 @app.get("/auth/me")
 def get_me(user=Depends(get_current_user)):
-    print(f"Current user: {user}")
     user_id, name, email = user
     return user
 
