@@ -2,7 +2,7 @@ FROM node:18-alpine as build
 
 WORKDIR /app
 COPY package*.json ./
-RUN npm install
+RUN npm install -D stylelint stylelint-config-standard
 
 COPY . .
 RUN npm run build
