@@ -103,6 +103,15 @@ class ChangePasswordRequest(BaseModel):
 
 
 # -----------------------------
+# HEALTH CHECK
+# -----------------------------    
+
+@app.get("/")
+def root():
+    return {"status": "InsightFlow backend is running 🚀"}
+
+
+# -----------------------------
 # PDF GENERATOR (SAFE)
 # -----------------------------
 def generate_pdf(data: ReportRequest, filepath: str):
