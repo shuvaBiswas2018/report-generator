@@ -20,3 +20,5 @@ SMTP_HOST = os.getenv("SMTP_HOST")
 SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
 SMTP_USER = os.getenv("SMTP_USER")
 SMTP_PASS = os.getenv("SMTP_PASS")
+
+print("Backernd URL:", BACKEND_URL, "Environment:", ENV, "Database URL:", DATABASE_URL, "SERPAPI Key:", SERPAPI_API_KEY)
