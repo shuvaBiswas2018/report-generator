@@ -14,7 +14,7 @@ import Contact from './pages/Contact';
 import ComingSoon from './pages/ComingSoon';
 import { AuthProvider, useAuth} from './auth/AuthProvider';
 import LoginPromptModal from "./components/LoginPromptModal";
-// import './App.css';
+import './App.css';
 
 /* ---------------- LAYOUT WITH LOGIN PROMPT ---------------- */
 
