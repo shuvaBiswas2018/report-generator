@@ -1,15 +1,15 @@
-FROM node:18-alpine as build
-
+FROM node:18-alpine AS build
 WORKDIR /app
+
 COPY package*.json ./
-RUN npm install -D stylelint stylelint-config-standard
+RUN npm ci
 
 COPY . .
 RUN npm run build
 
 FROM node:18-alpine
-WORKDIR /app
 RUN npm install -g serve
+WORKDIR /app
 COPY --from=build /app/build ./build
 
 EXPOSE 3000
