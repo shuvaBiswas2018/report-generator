@@ -26,7 +26,7 @@ from auth_google import google_oauth
 from config import *
 
     
-
+print("Starting FastAPI app with BACKEND_URL:", BACKEND_URL, "ENV:", ENV)
 
 app = FastAPI()
 
