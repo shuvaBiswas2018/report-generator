@@ -5,10 +5,12 @@
 
 # Build output
 /build/
+build/
 
 # Local environment files (keep .env.example in repo if you have one)
-.env
+.env*
 .env.local
+.env.production
 .env.development.local
 .env.test.local
 .env.production.local
