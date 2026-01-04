@@ -37,3 +37,4 @@ jobs:
           cd ~/insightflow
           docker compose pull
           docker compose up -d
+
