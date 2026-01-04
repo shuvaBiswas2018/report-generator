@@ -4,22 +4,17 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AuthRoutes from "./routes/AuthRoutes";
 
 import Header from './components/Header';
-// import Sidebar from './components/Sidebar';
 import Home from './components/Home';
 import AnalysisSelection from "./components/AnalysisSelection";
 import MyProfile from "./pages/MyProfile";
-// import AnalysisPage from './components/AnalysisPage';
 import EnergyAnalysis from './components/EnergyAnalysis';
 import EnergyAnalysisDetails from "./analysisDetails/EnergyAnalysisDetails";
 
 import Contact from './pages/Contact';
-// import Login from './pages/Login';
-// import ForgotPassword from "./pages/ForgotPassword";
-// import Signup from './pages/Signup';
 import ComingSoon from './pages/ComingSoon';
 import { AuthProvider, useAuth} from './auth/AuthProvider';
 import LoginPromptModal from "./components/LoginPromptModal";
-import './App.css';
+// import './App.css';
 
 /* ---------------- LAYOUT WITH LOGIN PROMPT ---------------- */
 
@@ -31,14 +26,14 @@ function AppLayout({ children }) {
   const repeatTimerRef = useRef(null);
 
   useEffect(() => {
-    // If user logs in → clear everything
+    /* If user logs in → clear everything */
     if (user) {
       clearAllTimers();
       setShowLoginPrompt(false);
       return;
     }
 
-    // Show first prompt after 2 minutes
+    /*  Show first prompt after 2 minutes of inactivity */
     firstTimerRef.current = setTimeout(() => {
       setShowLoginPrompt(true);
     }, 0.5 * 60 * 1000);
