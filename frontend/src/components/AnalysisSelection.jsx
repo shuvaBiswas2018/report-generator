@@ -1,7 +1,7 @@
 // src/components/AnalysisSelection.jsx
 import React from "react";
 import { Link } from "react-router-dom";
-// import "./AnalysisSelection.css";
+import "./AnalysisSelection.css";
 
 export default function AnalysisSelection() {
   const analyses = [
