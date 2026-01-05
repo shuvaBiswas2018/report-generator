@@ -5,7 +5,7 @@ import boto3
 from watchtower import CloudWatchLogHandler  # type: ignore
 from datetime import datetime
 
-load_dotenv()
+from config import *
 
 class RequestIDFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
@@ -20,13 +20,13 @@ def setup_logger(endpoint_name, log_group, env, log_file=None):
     
     if env == 'prod':
         # Create a Boto3 session for CloudWatch Logs
-        boto3_session = boto3.client("logs", aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'), aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'), region_name="ap-south-1")
+        boto3_session = boto3.client("logs", aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name="ap-south-1")
         # Create a CloudWatchLogHandler for this logger
         handler = CloudWatchLogHandler(boto3_client=boto3_session, log_group=log_group, create_log_group=True)
 
     elif env == 'staging':
         # Create a Boto3 session for CloudWatch Logs
-        boto3_session = boto3.client("logs", aws_access_key_id=os.getenv('AWS_ACCESS_KEY_ID'), aws_secret_access_key=os.getenv('AWS_SECRET_ACCESS_KEY'), region_name="ap-south-1")
+        boto3_session = boto3.client("logs", aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY, region_name="ap-south-1")
         # Create a CloudWatchLogHandler for this logger
         handler = CloudWatchLogHandler(boto3_client=boto3_session, log_group=log_group, create_log_group=True)
     
