@@ -1,1 +1,3 @@
 2026-01-05 19:23:23,210 : INFO - Health check endpoint accessed - Request ID: unknown - Epoch Time: 1767621203
+2026-01-05 19:54:35,242 : INFO - Starting FastAPI app with BACKEND_URL: http://localhost:8000, ENV: local - Request ID: unknown - Epoch Time: 1767623075
+2026-01-05 19:54:46,554 : INFO - Starting FastAPI app with BACKEND_URL: http://localhost:8000, ENV: local - Request ID: unknown - Epoch Time: 1767623086

@@ -27,7 +27,6 @@ from loggingsetup import *
 from config import *
 
     
-print("Starting FastAPI app with BACKEND_URL:", BACKEND_URL, "ENV:", ENV)
 
 app = FastAPI()
 
@@ -62,6 +61,8 @@ def get_logger(route_name):
     return logger
 
 logger = get_logger('insightflow-backend')
+
+logger.info(f"Starting FastAPI app with BACKEND_URL: {BACKEND_URL}, ENV: {ENV}")
 
 # def get_db():
 #     db = SessionLocal()
@@ -601,6 +602,7 @@ def explain_feature(req: FeatureExplainRequest):
 @app.get("/auth/google/login")
 async def google_login(request: Request):
     redirect_uri = f"{BACKEND_URL}/auth/google/callback"
+    logger.info("Initiating Google OAuth login")
     return await google_oauth.google.authorize_redirect(request, redirect_uri)
 
 
@@ -612,6 +614,8 @@ async def google_callback(request: Request):
     email = user_info["email"]
     name = user_info["name"]
 
+    logger.info(f"Google OAuth callback received for email: {email}")
+
     conn = get_db_connection()
     cur = conn.cursor()
 
@@ -620,6 +624,7 @@ async def google_callback(request: Request):
     user = cur.fetchone()
 
     if not user:
+        logger.info(f"Creating new user for Google email: {email}")
         first_name = name.split(" ")[0]
         last_name = " ".join(name.split(" ")[1:]) if len(name.split(" ")) > 1 else ""
 
@@ -643,7 +648,7 @@ async def google_callback(request: Request):
         "sub": str(user_id),
         "email": email
     })
-    
+    logger.info(f"Generated JWT token for Google user {email}")
     # Redirect back to frontend
     return RedirectResponse(
         url=f"{FRONTEND_URL}/oauth-success?token={jwt_token}"
