@@ -36,7 +36,7 @@ function AppLayout({ children }) {
     /*  Show first prompt after 2 minutes of inactivity */
     firstTimerRef.current = setTimeout(() => {
       setShowLoginPrompt(true);
-    }, 0.5 * 60 * 1000);
+    }, 2 * 60 * 1000);
 
     return clearAllTimers;
   }, [user]);

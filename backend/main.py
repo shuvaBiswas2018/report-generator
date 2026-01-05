@@ -23,6 +23,7 @@ from auth_utils import get_current_user
 from auth_linkedin import router as linkedin_router
 from auth_github import router as github_router
 from auth_google import google_oauth
+from loggingsetup import *
 from config import *
 
     
@@ -53,6 +54,14 @@ app.include_router(github_router)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 REPORT_DIR = os.path.join(BASE_DIR, "reports")
 os.makedirs(REPORT_DIR, exist_ok=True)
+
+def get_logger(route_name):
+    log_file = f"{route_name}.log"
+    log_group = f"efficiotech_{route_name}_logs"
+    logger = setup_logger(route_name, log_group, ENV, log_file)
+    return logger
+
+logger = get_logger('insightflow-backend')
 
 # def get_db():
 #     db = SessionLocal()
@@ -108,6 +117,7 @@ class ChangePasswordRequest(BaseModel):
 
 @app.get("/")
 def root():
+    logger.info("Health check endpoint accessed")
     return {"status": "InsightFlow backend is running 🚀"}
 
 
