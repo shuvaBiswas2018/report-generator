@@ -609,7 +609,13 @@ async def google_login(request: Request):
 @app.get("/auth/google/callback")
 async def google_callback(request: Request):
     logger.info("Received Google OAuth callback")
+    
     token = await google_oauth.google.authorize_access_token(request)
+    
+    if not token:
+        logger.error("Google OAuth authorization failed")
+        raise HTTPException(status_code=400, detail="Google OAuth authorization failed")
+    
     user_info = token.get("userinfo")
 
     email = user_info["email"]
