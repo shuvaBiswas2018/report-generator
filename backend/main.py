@@ -22,7 +22,7 @@ from email_utils import send_reset_email
 from auth_utils import get_current_user
 from auth_linkedin import router as linkedin_router
 from auth_github import router as github_router
-from auth_google import google_oauth
+from auth_google import router as google_router
 from loggingsetup import *
 from config import *
 
@@ -50,6 +50,7 @@ app.add_middleware(
 
 app.include_router(linkedin_router)
 app.include_router(github_router)
+app.include_router(google_router)
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 REPORT_DIR = os.path.join(BASE_DIR, "reports")
 os.makedirs(REPORT_DIR, exist_ok=True)
@@ -597,69 +598,6 @@ def explain_feature(req: FeatureExplainRequest):
         "overview": f"AI-curated insights about {req.feature}",
         "sources": results
     }
-
-
-@app.get("/auth/google/login")
-async def google_login(request: Request):
-    redirect_uri = f"{BACKEND_URL}/auth/google/callback"
-    logger.info("Initiating Google OAuth login")
-    return await google_oauth.google.authorize_redirect(request, redirect_uri)
-
-
-@app.get("/auth/google/callback")
-async def google_callback(request: Request):
-    logger.info("Received Google OAuth callback")
-    
-    token = await google_oauth.google.authorize_access_token(request)
-    
-    if not token:
-        logger.error("Google OAuth authorization failed")
-        raise HTTPException(status_code=400, detail="Google OAuth authorization failed")
-    
-    user_info = token.get("userinfo")
-
-    email = user_info["email"]
-    name = user_info["name"]
-
-    logger.info(f"Google OAuth callback received for email: {email}")
-
-    conn = get_db_connection()
-    cur = conn.cursor()
-
-    # Check if user exists
-    cur.execute("SELECT id, first_name, last_name, email FROM users WHERE email = %s", (email,))
-    user = cur.fetchone()
-
-    if not user:
-        logger.info(f"Creating new user for Google email: {email}")
-        first_name = name.split(" ")[0]
-        last_name = " ".join(name.split(" ")[1:]) if len(name.split(" ")) > 1 else ""
-
-        cur.execute(
-            """
-            INSERT INTO users (first_name, last_name, email, password, auth_provider)
-            VALUES (%s, %s, %s, %s, %s)
-            RETURNING id
-            """,
-            (first_name, last_name, email, "", "google")
-        )
-        user_id = cur.fetchone()[0]
-        conn.commit()
-    else:
-        user_id = user[0]
-
-    cur.close()
-    conn.close()
-
-    jwt_token = create_access_token({
-        "sub": str(user_id),
-        "email": email
-    })
-    logger.info(f"Generated JWT token for Google user {email}")
-    # Redirect back to frontend
-    return RedirectResponse(
-        url=f"{FRONTEND_URL}/oauth-success?token={jwt_token}"
-    )
 
 
 @app.get("/auth/me")
