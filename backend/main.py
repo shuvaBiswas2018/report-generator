@@ -44,8 +44,9 @@ app.add_middleware(
 # Session middleware (REQUIRED for Google OAuth)
 app.add_middleware(
     SessionMiddleware,
-    secret_key="SUPER_SECRET_RANDOM_STRING",
-    same_site="lax"
+    secret_key="super-secret-key-CHANGE-THIS",
+    same_site="lax",
+    https_only=False
 )
 
 
