@@ -48,9 +48,7 @@ app.add_middleware(
     same_site="lax"
 )
 
-app.include_router(linkedin_router)
-app.include_router(github_router)
-app.include_router(google_router)
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 REPORT_DIR = os.path.join(BASE_DIR, "reports")
 os.makedirs(REPORT_DIR, exist_ok=True)
@@ -65,6 +63,10 @@ logger = get_logger('insightflow-backend')
 
 logger.info(f"Starting FastAPI app with BACKEND_URL: {BACKEND_URL}, ENV: {ENV}")
 
+
+app.include_router(linkedin_router)
+app.include_router(github_router)
+app.include_router(google_router)
 # def get_db():
 #     db = SessionLocal()
 #     try:
