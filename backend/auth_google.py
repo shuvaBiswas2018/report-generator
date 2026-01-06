@@ -1,12 +1,12 @@
 from asyncio.log import logger
 from authlib.integrations.starlette_client import OAuth
 import os
-from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, BACKEND_URL, FRONTEND_URL
 from fastapi import APIRouter, Request, HTTPException
 from starlette.responses import RedirectResponse
 from database import get_db_connection
 from auth import create_access_token
-from config import BACKEND_URL, FRONTEND_URL
+
 
 router = APIRouter()
 
@@ -23,7 +23,7 @@ google_oauth.register(
 )
 
 
-@router.get("/auth/linkedin/login")
+@router.get("/auth/google/login")
 async def google_login(request: Request):
     redirect_uri = f"{BACKEND_URL}/auth/google/callback"
     logger.info("Initiating Google OAuth login")
