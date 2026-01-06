@@ -608,6 +608,7 @@ async def google_login(request: Request):
 
 @app.get("/auth/google/callback")
 async def google_callback(request: Request):
+    logger.info("Received Google OAuth callback")
     token = await google_oauth.google.authorize_access_token(request)
     user_info = token.get("userinfo")
 
