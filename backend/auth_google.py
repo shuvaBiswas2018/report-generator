@@ -1,4 +1,4 @@
-from asyncio.log import logger
+import logging
 from authlib.integrations.starlette_client import OAuth
 import os
 from config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, BACKEND_URL, FRONTEND_URL
@@ -6,6 +6,9 @@ from fastapi import APIRouter, Request, HTTPException
 from starlette.responses import RedirectResponse
 from database import get_db_connection
 from auth import create_access_token
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 router = APIRouter()
@@ -31,29 +34,32 @@ async def google_login(request: Request):
 
 
 @router.get("/auth/google/callback")
-async def google_callback(code:str = None, request: Request = None):
-    token = await google_oauth.google.authorize_access_token(request)
+async def google_callback(request: Request):
+    try:
+        token = await google_oauth.google.authorize_access_token(request)
+    except Exception as e:
+        logger.error(f"Google OAuth token error: {e}")
+        raise HTTPException(status_code=400, detail="Google OAuth failed")
 
     if not token:
-        print("Google OAuth authorization failed")
-        raise HTTPException(status_code=400, detail="Google OAuth authorization failed")
-    
+        raise HTTPException(status_code=400, detail="No token received")
+
     user_info = token.get("userinfo")
+    if not user_info:
+        user_info = await google_oauth.google.parse_id_token(request, token)
 
     email = user_info["email"]
-    name = user_info["name"]
+    name = user_info.get("name", "")
 
-    print(f"Google OAuth callback received for email: {email}")
+    logger.info(f"Google login successful for {email}")
 
     conn = get_db_connection()
     cur = conn.cursor()
 
-    # Check if user exists
-    cur.execute("SELECT id, first_name, last_name, email FROM users WHERE email = %s", (email,))
+    cur.execute("SELECT id FROM users WHERE email = %s", (email,))
     user = cur.fetchone()
 
     if not user:
-        logger.info(f"Creating new user for Google email: {email}")
         first_name = name.split(" ")[0]
         last_name = " ".join(name.split(" ")[1:]) if len(name.split(" ")) > 1 else ""
 
@@ -77,8 +83,7 @@ async def google_callback(code:str = None, request: Request = None):
         "sub": str(user_id),
         "email": email
     })
-    logger.info(f"Generated JWT token for Google user {email}")
-    # Redirect back to frontend
+
     return RedirectResponse(
         url=f"{FRONTEND_URL}/oauth-success?token={jwt_token}"
     )
