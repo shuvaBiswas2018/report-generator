@@ -45,8 +45,8 @@ app.add_middleware(
 app.add_middleware(
     SessionMiddleware,
     secret_key="super-secret-key-CHANGE-THIS",
-    same_site="lax",
-    https_only=False
+    same_site="none",
+    https_only=True
 )
 
 
