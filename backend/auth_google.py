@@ -39,6 +39,7 @@ async def google_callback(request: Request):
         token = await google_oauth.google.authorize_access_token(request)
     except Exception as e:
         logger.error(f"Google OAuth token error: {e}")
+        print("Session info:", request.session)
         raise HTTPException(status_code=400, detail="Google OAuth failed")
 
     if not token:
